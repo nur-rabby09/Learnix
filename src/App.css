@@ -6,38 +6,60 @@ body {
 
 /* Navbar */
 .navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: white;
   padding: 15px 20px;
   border-bottom: 1px solid #eee;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: nowrap;
+  gap: 20px;
 }
 
 .logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: 20px;
   font-weight: bold;
   color: green;
-  flex: 1;
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.logo-icon {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
 }
 
 .nav-links {
   flex: 1;
   display: flex;
   justify-content: center;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  overflow-x: auto;
 }
 
 .nav-links span {
   margin: 0 15px;
   color: #555;
   cursor: pointer;
+  white-space: nowrap;
 }
 
 .nav-actions {
-  flex: 1;
+  flex: 0 0 auto;
   display: flex;
   justify-content: flex-end;
   align-items: center;
   gap: 10px;
+  flex-wrap: nowrap;
+  white-space: nowrap;
 }
 
 .btn-outline {
@@ -46,6 +68,7 @@ body {
   border: 1px solid green;
   padding: 8px 16px;
   border-radius: 20px;
+  white-space: nowrap;
 }
 
 .btn-solid {
@@ -55,6 +78,7 @@ body {
   padding: 8px 16px;
   border-radius: 20px;
   cursor: pointer;
+  white-space: nowrap;
 }
 
 /* Hero with background photo */
@@ -62,7 +86,187 @@ body {
   background-image: linear-gradient(90deg, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.1) 100%), url("/image01.png");
   background-size: cover;
   background-position: right center;
-  background-attachment: fixed;
+  color: white;
+  text-align: left;
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 60px;
+  box-sizing: border-box;
+}
+
+.hero h1 {
+  font-size: 42px;
+  line-height: 1.2;
+  max-width: 600px;
+  margin: 0 0 14px;
+  color: white; 
+}
+
+.hero p {
+  font-size: 18px;
+  max-width: 500px;
+  margin: 0 0 24px;
+}
+
+.search-bar {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.hero input {
+  padding: 14px 16px;
+  width: 280px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px 0 0 5px;
+}
+
+.hero .btn-solid {
+  padding: 14px 24px;
+  font-size: 16px;
+  border-radius: 0 5px 5px 0;
+}
+
+/* Section titles */
+.section-title {
+  font-size: 30px;
+  padding: 60px 20px 20px;
+}
+
+/* Cards row */
+.row {
+  display: flex;
+  gap: 25px;
+  padding: 0 20px 60px;
+  flex-wrap: wrap;
+}
+
+.card {
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 30px 25px;
+  width: 260px;
+  min-height: 160px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.card h3 {
+  font-size: 20px;
+  margin: 0 0 10px;
+}
+
+.card p {
+  font-size: 16px;
+  color: #666;
+}
+
+/* Footer */
+.footer {
+  border-top: 1px solid #eee;
+  text-align: center;
+  padding: 60px 20px;
+  color: gray;
+}body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  color: #333;
+}
+
+/* Navbar */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: white;
+  padding: 15px 20px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  gap: 20px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 20px;
+  font-weight: bold;
+  color: green;
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.logo-icon {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.nav-links {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  overflow-x: auto;
+}
+
+.nav-links span {
+  margin: 0 15px;
+  color: #555;
+  cursor: pointer;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.nav-links span.active {
+  color: green;
+  font-weight: 700;
+}
+
+.nav-actions {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+}
+
+.btn-outline {
+  background: white;
+  color: green;
+  border: 1px solid green;
+  padding: 8px 16px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.btn-solid {
+  background: green;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* Hero with background photo */
+.hero {
+  background-image: linear-gradient(90deg, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.1) 100%), url("/image01.png");
+  background-size: cover;
+  background-position: right center;
   color: white;
   text-align: left;
   min-height: 80vh;
