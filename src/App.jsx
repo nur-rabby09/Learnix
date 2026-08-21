@@ -1,5 +1,11 @@
+import { useState } from 'react';
 import './App.css';
+
+const NAV_ITEMS = ['Home', 'Study spaces', 'Study buddy', 'Accessories'];
+
 function App() {
+  const [activeTab, setActiveTab] = useState('Home');
+
   return (
     <div>
 
@@ -7,10 +13,15 @@ function App() {
       <div className="navbar">
         <span className="logo">Learnix</span>
         <div className="nav-links">
-          <span>Home</span>
-          <span>Study spaces</span>
-          <span>Study buddy</span>
-          <span>Accessories</span>
+          {NAV_ITEMS.map((item) => (
+            <span
+              key={item}
+              className={activeTab === item ? 'active' : ''}
+              onClick={() => setActiveTab(item)}
+            >
+              {item}
+            </span>
+          ))}
         </div>
         <div className="nav-actions">
           <button className="btn-outline">Get Started</button>

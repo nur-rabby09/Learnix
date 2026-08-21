@@ -6,38 +6,57 @@ body {
 
 /* Navbar */
 .navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: white;
   padding: 15px 20px;
   border-bottom: 1px solid #eee;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: nowrap;
+  gap: 20px;
 }
 
 .logo {
   font-size: 20px;
   font-weight: bold;
   color: green;
-  flex: 1;
+  flex: 0 0 auto;
+  white-space: nowrap;
 }
 
 .nav-links {
   flex: 1;
   display: flex;
   justify-content: center;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  overflow-x: auto;
 }
 
 .nav-links span {
   margin: 0 15px;
   color: #555;
   cursor: pointer;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.nav-links span.active {
+  color: green;
+  font-weight: 700;
 }
 
 .nav-actions {
-  flex: 1;
+  flex: 0 0 auto;
   display: flex;
   justify-content: flex-end;
   align-items: center;
   gap: 10px;
+  flex-wrap: nowrap;
+  white-space: nowrap;
 }
 
 .btn-outline {
@@ -46,6 +65,7 @@ body {
   border: 1px solid green;
   padding: 8px 16px;
   border-radius: 20px;
+  white-space: nowrap;
 }
 
 .btn-solid {
@@ -55,6 +75,7 @@ body {
   padding: 8px 16px;
   border-radius: 20px;
   cursor: pointer;
+  white-space: nowrap;
 }
 
 /* Hero with background photo */
@@ -62,7 +83,6 @@ body {
   background-image: linear-gradient(90deg, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.1) 100%), url("/image01.png");
   background-size: cover;
   background-position: right center;
-  background-attachment: fixed;
   color: white;
   text-align: left;
   min-height: 80vh;
