@@ -1,122 +1,76 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
-
+import './App.css';
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div>
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+      {/* Top navbar */}
+      <div className="navbar">
+        <span className="logo">Learnix</span>
+        <div className="nav-links">
+          <span>Home</span>
+          <span>Study spaces</span>
+          <span>Study buddy</span>
+          <span>Accessories</span>
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
+        <div className="nav-actions">
+          <button className="btn-outline">Get Started</button>
+          <button className="btn-solid">Sign up</button>
         </div>
-      </section>
+      </div>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      {/* Hero with background photo and quote */}
+      <div className="hero">
+        <h1>"Where quiet corners meet great company"</h1>
+        <p>Quiet corners, open seats, and study partners.</p>
+        <div className="search-bar">
+          <input type="text" placeholder="Search location" />
+          <button className="btn-solid">Search</button>
+        </div>
+      </div>
+
+      {/* Study spaces */}
+      <h2 className="section-title">Study Spaces</h2>
+      <div className="row">
+        <div className="card">
+          <h3>Central Library</h3>
+          <p>18 seats open</p>
+        </div>
+        <div className="card">
+          <h3>Brew & Books Cafe</h3>
+          <p>6 seats open</p>
+        </div>
+        <div className="card">
+          <h3>Focus Hub</h3>
+          <p>11 seats open</p>
+        </div>
+      </div>
+
+      {/* Study buddy */}
+      <h2 className="section-title">Study Buddy</h2>
+      <div className="row">
+        <div className="card">
+          <h3>Sarah K.</h3>
+          <p>Studying Calculus II</p>
+        </div>
+        <div className="card">
+          <h3>Rafi H.</h3>
+          <p>Studying Data Structures</p>
+        </div>
+      </div>
+
+      {/* Share accessories */}
+      <h2 className="section-title">Share Accessories</h2>
+      <div className="row">
+        <div className="card">Calculator</div>
+        <div className="card">Charger</div>
+        <div className="card">Books</div>
+      </div>
+
+      {/* Footer */}
+      <div className="footer">About Us</div>
+
+    </div>
+  );
 }
 
-export default App
+export default App;
