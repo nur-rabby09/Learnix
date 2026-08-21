@@ -11,15 +11,7 @@ function App() {
 
       {/* Top navbar */}
       <div className="navbar">
-        <span className="logo">
-          <svg className="logo-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="16" cy="16" r="16" fill="#1f7a1f" />
-            <path d="M16 8L27 12.5L16 17L5 12.5L16 8Z" fill="white" />
-            <path d="M9 14.5V19.5C9 19.5 12 22 16 22C20 22 23 19.5 23 19.5V14.5" stroke="white" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-            <line x1="27" y1="12.5" x2="27" y2="18" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
-          </svg>
-          Learnix
-        </span>
+        <span className="logo">Learnix</span>
         <div className="nav-links">
           {NAV_ITEMS.map((item) => (
             <span
