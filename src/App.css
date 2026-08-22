@@ -136,6 +136,7 @@ body {
 /* Cards row */
 .row {
   display: flex;
+  justify-content: center;
   gap: 25px;
   padding: 0 20px 60px;
   flex-wrap: wrap;
@@ -152,16 +153,132 @@ body {
   flex-direction: column;
   justify-content: center;
   box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.feature-card {
+  width: 300px;
+  padding: 40px 30px;
+  min-height: 200px;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+  border-color: green;
+}
+
+.feature-icon {
+  font-size: 34px;
+  margin-bottom: 14px;
+}
+
+.feature-card {
+  text-align: center;
+  align-items: center;
 }
 
 .card h3 {
-  font-size: 20px;
-  margin: 0 0 10px;
+  font-size: 22px;
+  margin: 0 0 12px;
 }
 
 .card p {
-  font-size: 16px;
+  font-size: 17px;
+  line-height: 1.5;
   color: #666;
+}
+
+/* Stats strip */
+.stats-strip {
+  display: flex;
+  justify-content: center;
+  gap: 60px;
+  padding: 40px 20px 60px;
+  flex-wrap: wrap;
+  text-align: center;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-number {
+  font-size: 32px;
+  font-weight: bold;
+  color: green;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: #666;
+  margin-top: 4px;
+}
+
+/* How it works */
+.steps {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  padding: 0 20px 60px;
+  flex-wrap: wrap;
+}
+
+.step {
+  max-width: 240px;
+  text-align: center;
+}
+
+.step-number {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: green;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+
+.step h3 {
+  font-size: 18px;
+  margin: 0 0 8px;
+}
+
+.step p {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+}
+
+/* CTA banner */
+.cta-banner {
+  background: green;
+  color: white;
+  text-align: center;
+  padding: 70px 20px;
+}
+
+.cta-banner h2 {
+  font-size: 30px;
+  margin: 0 0 12px;
+}
+
+.cta-banner p {
+  font-size: 16px;
+  margin: 0 0 28px;
+  opacity: 0.9;
+}
+
+.cta-btn {
+  background: white;
+  color: green;
+  font-size: 16px;
+  padding: 14px 32px;
 }
 
 /* Footer */
