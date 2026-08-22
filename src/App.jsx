@@ -1,10 +1,12 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './App.css';
 
 const NAV_ITEMS = ['Home', 'Study spaces', 'Study buddy', 'Accessories'];
 
 function App() {
   const [activeTab, setActiveTab] = useState('Home');
+  const navigate = useNavigate();
 
   return (
     <div>
@@ -24,8 +26,8 @@ function App() {
           ))}
         </div>
         <div className="nav-actions">
-          <button className="btn-outline">Get Started</button>
-          <button className="btn-solid">Sign up</button>
+          <button className="btn-outline" onClick={() => navigate('/login')}>Get Started</button>
+          <button className="btn-solid" onClick={() => navigate('/signup')}>Sign up</button>
         </div>
       </div>
 
