@@ -1,55 +1,12 @@
-.accessories-page {
-  font-family: Arial, sans-serif;
-  min-height: 100vh;
-  background: #faf9f6;
-}
-
-.accessories-page .navbar {
-  position: sticky;
-  top: 0;
-  background: white;
-  padding: 15px 20px;
-  border-bottom: 1px solid #eee;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.accessories-page .logo {
-  font-size: 20px;
-  font-weight: bold;
-  color: green;
-  cursor: pointer;
-}
-
-.accessories-page .btn-solid {
-  background: green;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 20px;
-  cursor: pointer;
-}
-
-.accessories-wrapper {
-  padding: 40px 20px 60px;
-}
-
-.accessories-title {
-  font-size: 30px;
-  text-align: center;
-  margin: 0 0 24px;
-}
-
-.category-row {
+.acc-category-row {
   display: flex;
   justify-content: center;
   gap: 12px;
   flex-wrap: wrap;
-  margin-bottom: 30px;
+  padding: 0 40px 30px;
 }
 
-.category-chip {
+.acc-chip {
   padding: 8px 16px;
   border: 1px solid #ddd;
   border-radius: 20px;
@@ -58,65 +15,31 @@
   font-size: 14px;
 }
 
-.category-chip.active {
+.acc-chip.active {
   background: green;
   color: white;
   border-color: green;
 }
 
-.accessories-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 25px;
-  justify-content: center;
-}
-
-.accessory-card {
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  padding: 25px;
-  width: 240px;
-  box-sizing: border-box;
-  background: white;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-  text-align: left;
-}
-
-.accessory-card h3 {
-  font-size: 18px;
-  margin: 0 0 8px;
-}
-
-.shared-by {
-  font-size: 14px;
-  color: #666;
-  margin: 0 0 12px;
-}
-
-.status {
+.acc-status {
   display: inline-block;
   font-size: 13px;
   font-weight: 600;
   padding: 4px 10px;
   border-radius: 12px;
-  margin-bottom: 16px;
 }
 
-.status.available {
+.acc-status.available {
   background: #e3f5e9;
   color: green;
 }
 
-.status.borrowed {
+.acc-status.borrowed {
   background: #f0f0f0;
   color: #888;
 }
 
-.request-btn {
-  width: 100%;
-}
-
-.request-btn:disabled {
+.sb-interested-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }

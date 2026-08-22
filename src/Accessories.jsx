@@ -1,59 +1,160 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './Accessories.css';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "./App.css";
+import "./StudyBuddy.css";
+import "./Accessories.css";
+import heroImg from "./assets/accessories.jpg";
 
-const CATEGORIES = ['All', 'Calculators', 'Chargers', 'Books', 'Other'];
+const NAV_ITEMS = [
+  { label: "Home", path: "/" },
+  { label: "Study spaces", path: "/study-spaces" },
+  { label: "Study buddy", path: "/study-buddy" },
+  { label: "Accessories", path: "/accessories" },
+];
+
+const CATEGORIES = ["All", "Calculators", "Chargers", "Books", "Other"];
 
 const ITEMS = [
-  { name: 'Scientific Calculator', owner: 'Rafi H.', category: 'Calculators', available: true },
-  { name: 'Phone Charger', owner: 'Sarah K.', category: 'Chargers', available: true },
-  { name: 'Calculus Textbook', owner: 'Meena T.', category: 'Books', available: false },
-  { name: 'Laptop Charger', owner: 'Arif K.', category: 'Chargers', available: true },
-  { name: 'Graph Calculator', owner: 'Nabila S.', category: 'Calculators', available: false },
-  { name: 'Umbrella', owner: 'Tanvir A.', category: 'Other', available: true },
+  {
+    name: "Scientific Calculator",
+    owner: "Rafi H.",
+    category: "Calculators",
+    available: true,
+  },
+  {
+    name: "Phone Charger",
+    owner: "Sarah K.",
+    category: "Chargers",
+    available: true,
+  },
+  {
+    name: "Calculus Textbook",
+    owner: "Meena T.",
+    category: "Books",
+    available: false,
+  },
+  {
+    name: "Laptop Charger",
+    owner: "Arif K.",
+    category: "Chargers",
+    available: true,
+  },
+  {
+    name: "Graph Calculator",
+    owner: "Nabila S.",
+    category: "Calculators",
+    available: false,
+  },
+  { name: "Umbrella", owner: "Tanvir A.", category: "Other", available: true },
 ];
 
 function Accessories() {
-  const [activeCategory, setActiveCategory] = useState('All');
+  const [activeCategory, setActiveCategory] = useState("All");
   const navigate = useNavigate();
 
-  const filteredItems = activeCategory === 'All'
-    ? ITEMS
-    : ITEMS.filter((item) => item.category === activeCategory);
+  const filteredItems =
+    activeCategory === "All"
+      ? ITEMS
+      : ITEMS.filter((item) => item.category === activeCategory);
 
   return (
-    <div className="accessories-page">
+    <div>
+      {/* Top navbar */}
       <div className="navbar">
-        <span className="logo" onClick={() => navigate('/')}>Learnix</span>
-        <button className="btn-solid">List an Item</button>
-      </div>
-
-      <div className="accessories-wrapper">
-        <h2 className="accessories-title">Share Accessories</h2>
-
-        <div className="category-row">
-          {CATEGORIES.map((category) => (
+        <span
+          className="logo"
+          onClick={() => navigate("/")}
+          style={{ cursor: "pointer" }}
+        >
+          Learnix
+        </span>
+        <div className="nav-links">
+          {NAV_ITEMS.map((item) => (
             <span
-              key={category}
-              className={activeCategory === category ? 'category-chip active' : 'category-chip'}
-              onClick={() => setActiveCategory(category)}
+              key={item.label}
+              className={item.label === "Accessories" ? "active" : ""}
+              onClick={() => item.path && navigate(item.path)}
             >
-              {category}
+              {item.label}
             </span>
           ))}
         </div>
+        <div className="nav-actions">
+          <button className="btn-solid" onClick={() => navigate("/signup")}>
+            Sign up
+          </button>
+        </div>
+      </div>
 
-        <div className="accessories-grid">
+      {/* Hero banner with background image and quote */}
+      <div
+        className="sb-hero"
+        style={{
+          backgroundImage: `linear-gradient(90deg, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.1) 100%), url(${heroImg})`,
+        }}
+      >
+        <h1>
+          Everything you need,{" "}
+          <span className="sb-highlight">shared by someone nearby</span>
+        </h1>
+        <p>
+          Borrow a calculator, a charger, or a textbook — no need to buy what
+          someone already has.
+        </p>
+      </div>
+
+      {/* Page header, styled like Study Buddy */}
+      <div className="sb-header">
+        <div>
+          <h1>Share Accessories</h1>
+          <p>Borrow or lend items with students nearby.</p>
+        </div>
+        <button className="btn-solid sb-create-btn">+ List an Item</button>
+      </div>
+
+      {/* Category filter */}
+      <div className="acc-category-row">
+        {CATEGORIES.map((category) => (
+          <span
+            key={category}
+            className={
+              activeCategory === category ? "acc-chip active" : "acc-chip"
+            }
+            onClick={() => setActiveCategory(category)}
+          >
+            {category}
+          </span>
+        ))}
+      </div>
+
+      {/* Items feed, styled like Study Buddy posts */}
+      <div className="sb-feed">
+        <div className="sb-grid">
           {filteredItems.map((item) => (
-            <div className="accessory-card" key={item.name}>
-              <h3>{item.name}</h3>
-              <p className="shared-by">Shared by {item.owner}</p>
-              <span className={item.available ? 'status available' : 'status borrowed'}>
-                {item.available ? 'Available' : 'Borrowed'}
-              </span>
-              <button className="btn-outline request-btn" disabled={!item.available}>
-                Request
-              </button>
+            <div className="sb-card" key={item.name}>
+              <h3 className="sb-card-title">{item.name}</h3>
+              <p className="sb-card-desc">Shared by {item.owner}</p>
+
+              <div className="sb-meta">
+                <span
+                  className={
+                    item.available
+                      ? "acc-status available"
+                      : "acc-status borrowed"
+                  }
+                >
+                  {item.available ? "Available" : "Borrowed"}
+                </span>
+              </div>
+
+              <div className="sb-contact">
+                <button
+                  className="btn-solid sb-interested-btn"
+                  disabled={!item.available}
+                >
+                  Request
+                </button>
+              </div>
             </div>
           ))}
         </div>
