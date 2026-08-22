@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './App.css';
 import './StudyBuddy.css';
-import './Accessories'
+import Footer from './Footer.jsx';
 import heroImg from './assets/image001.jpg';
 
 const NAV_ITEMS = [
@@ -135,6 +135,8 @@ function StudyBuddy() {
           </div>
         )}
       </div>
+
+      <Footer />
 
     </div>
   );
