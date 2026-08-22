@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Accessories.css';
+import Footer from './Footer.jsx';
 
 const CATEGORIES = ['All', 'Calculators', 'Chargers', 'Books', 'Other'];
 
@@ -58,6 +59,7 @@ function Accessories() {
           ))}
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

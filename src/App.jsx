@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import './App.css';
+import Footer from './Footer.jsx';
 
 const NAV_ITEMS = [
   { label: 'Home', path: '/' },
@@ -87,7 +88,7 @@ function App() {
       </div>
 
       {/* Footer */}
-      <div className="footer">About Us</div>
+      <Footer />
 
     </div>
   );

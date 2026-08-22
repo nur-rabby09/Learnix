@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import './App.css';
+import Footer from './Footer.jsx';
 
 const NAV_ITEMS = [
   { label: 'Home', path: '/' },
@@ -34,6 +35,8 @@ function StudySpaces() {
       </div>
 
       {/* Page content goes here */}
+
+      <Footer />
 
     </div>
   );
