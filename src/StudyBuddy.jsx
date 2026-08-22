@@ -2,13 +2,14 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './App.css';
 import './StudyBuddy.css';
+import './Accessories'
 import heroImg from './assets/image001.jpg';
 
 const NAV_ITEMS = [
   { label: 'Home', path: '/' },
   { label: 'Study spaces', path: '/study-spaces' },
   { label: 'Study buddy', path: '/study-buddy' },
-  { label: 'Accessories', path: null },
+  { label: 'Accessories', path: '/accessories'},
 ];
 const DUMMY_POSTS = [
   {
