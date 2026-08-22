@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import './App.css';
+import "./StudyBuddy.css";
 import Footer from './Footer.jsx';
 
 const NAV_ITEMS = [
@@ -36,7 +37,8 @@ function App() {
 
       {/* Hero with background photo and quote */}
       <div className="hero">
-        <h1>"Where quiet corners meet great company"</h1>
+        <h1>"Where quiet corners meet <span className="sb-highlight">great company"</span>
+        </h1>
         <p>Quiet corners, open seats, and study partners.</p>
       </div>
 

@@ -4,6 +4,7 @@ import "./App.css";
 import "./StudyBuddy.css";
 import "./Accessories.css";
 import heroImg from "./assets/accessories.jpg";
+import Footer from "./Footer.jsx";
 
 const NAV_ITEMS = [
   { label: "Home", path: "/" },
@@ -15,36 +16,11 @@ const NAV_ITEMS = [
 const CATEGORIES = ["All", "Calculators", "Chargers", "Books", "Other"];
 
 const ITEMS = [
-  {
-    name: "Scientific Calculator",
-    owner: "Rafi H.",
-    category: "Calculators",
-    available: true,
-  },
-  {
-    name: "Phone Charger",
-    owner: "Sarah K.",
-    category: "Chargers",
-    available: true,
-  },
-  {
-    name: "Calculus Textbook",
-    owner: "Meena T.",
-    category: "Books",
-    available: false,
-  },
-  {
-    name: "Laptop Charger",
-    owner: "Arif K.",
-    category: "Chargers",
-    available: true,
-  },
-  {
-    name: "Graph Calculator",
-    owner: "Nabila S.",
-    category: "Calculators",
-    available: false,
-  },
+  { name: "Scientific Calculator", owner: "Rafi H.", category: "Calculators", available: true },
+  { name: "Phone Charger", owner: "Sarah K.", category: "Chargers", available: true },
+  { name: "Calculus Textbook", owner: "Meena T.", category: "Books", available: false },
+  { name: "Laptop Charger", owner: "Arif K.", category: "Chargers", available: true },
+  { name: "Graph Calculator", owner: "Nabila S.", category: "Calculators", available: false },
   { name: "Umbrella", owner: "Tanvir A.", category: "Other", available: true },
 ];
 
@@ -61,11 +37,7 @@ function Accessories() {
     <div>
       {/* Top navbar */}
       <div className="navbar">
-        <span
-          className="logo"
-          onClick={() => navigate("/")}
-          style={{ cursor: "pointer" }}
-        >
+        <span className="logo" onClick={() => navigate("/")} style={{ cursor: "pointer" }}>
           Learnix
         </span>
         <div className="nav-links">
@@ -94,13 +66,9 @@ function Accessories() {
         }}
       >
         <h1>
-          Everything you need,{" "}
-          <span className="sb-highlight">shared by someone nearby</span>
+          Everything you need, <span className="sb-highlight">shared by someone nearby</span>
         </h1>
-        <p>
-          Borrow a calculator, a charger, or a textbook — no need to buy what
-          someone already has.
-        </p>
+        <p>Borrow a calculator, a charger, or a textbook — no need to buy what someone already has.</p>
       </div>
 
       {/* Page header, styled like Study Buddy */}
@@ -117,9 +85,7 @@ function Accessories() {
         {CATEGORIES.map((category) => (
           <span
             key={category}
-            className={
-              activeCategory === category ? "acc-chip active" : "acc-chip"
-            }
+            className={activeCategory === category ? "acc-chip active" : "acc-chip"}
             onClick={() => setActiveCategory(category)}
           >
             {category}
@@ -127,7 +93,7 @@ function Accessories() {
         ))}
       </div>
 
-      {/* Items feed, styled like Study Buddy posts */}
+      {/* Items feed */}
       <div className="sb-feed">
         <div className="sb-grid">
           {filteredItems.map((item) => (
@@ -136,22 +102,13 @@ function Accessories() {
               <p className="sb-card-desc">Shared by {item.owner}</p>
 
               <div className="sb-meta">
-                <span
-                  className={
-                    item.available
-                      ? "acc-status available"
-                      : "acc-status borrowed"
-                  }
-                >
+                <span className={item.available ? "acc-status available" : "acc-status borrowed"}>
                   {item.available ? "Available" : "Borrowed"}
                 </span>
               </div>
 
               <div className="sb-contact">
-                <button
-                  className="btn-solid sb-interested-btn"
-                  disabled={!item.available}
-                >
+                <button className="btn-solid sb-interested-btn" disabled={!item.available}>
                   Request
                 </button>
               </div>
@@ -159,6 +116,8 @@ function Accessories() {
           ))}
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 }
