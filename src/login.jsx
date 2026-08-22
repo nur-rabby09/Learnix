@@ -13,15 +13,13 @@ function Login() {
     <div className="login-page">
       <div className="navbar">
         <span className="logo">Learnix</span>
-        <div className="nav-actions">
-          <button className="btn-solid">Get Started</button>
-        </div>
       </div>
 
       <div className="login-wrapper">
-        <div className="login-card">
-          <p className="eyebrow">Welcome back</p>
-          <h2>Sign in</h2>
+        <h2 className="login-title">Sign In</h2>
+
+      <div className="login-card">
+        <p className="eyebrow">Welcome back</p>
 
           <label>Email</label>
           <input
