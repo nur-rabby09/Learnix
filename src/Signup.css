@@ -1,0 +1,110 @@
+.signup-page {
+  font-family: Arial, sans-serif;
+  min-height: 100vh;
+  background: #f9f9f9;
+}
+
+.signup-page .navbar {
+  position: sticky;
+  top: 0;
+  background: white;
+  padding: 15px 20px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  align-items: center;
+}
+
+.signup-page .logo {
+  font-size: 20px;
+  font-weight: bold;
+  color: green;
+}
+
+.signup-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60px 20px;
+}
+
+.signup-title {
+  margin: 0 0 20px;
+  font-size: 32px;
+  color: #222;
+  text-align: center;
+}
+
+.signup-card {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  padding: 30px;
+  width: 500px;
+  box-sizing: border-box;
+}
+
+.signup-eyebrow {
+  color: green;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin: 0 0 24px;
+  text-align: center;
+}
+
+.name-row {
+  display: flex;
+  gap: 15px;
+}
+
+.name-field {
+  flex: 1;
+  text-align: left;
+}
+
+.signup-card label {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 6px;
+  color: #333;
+  text-align: left;
+}
+
+.signup-card input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #f4f2ec;
+  box-sizing: border-box;
+  font-size: 14px;
+  color: #222;
+}
+
+.signup-btn {
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+  border-radius: 20px;
+  margin-top: 5px;
+  background: green;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.login-text {
+  text-align: center;
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+}
+
+.login-text a {
+  color: green;
+  font-weight: 600;
+  text-decoration: none;
+}
