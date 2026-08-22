@@ -7,6 +7,7 @@ import Login from './login.jsx';
 import Signup from './Signup.jsx';
 import StudySpaces from './StudySpaces.jsx';
 import StudyBuddy from './StudyBuddy.jsx';
+import Accessories from './Accessories.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -17,7 +18,8 @@ createRoot(document.getElementById('root')).render(
         <Route path="/signup" element={<Signup />} />
         <Route path="/study-spaces" element={<StudySpaces />} />
         <Route path="/study-buddy" element={<StudyBuddy />} />
+        <Route path="/accessories" element={<Accessories />} />
       </Routes>
     </BrowserRouter>
-  </StrictMode>,
+  </StrictMode>
 )

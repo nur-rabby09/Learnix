@@ -5,7 +5,7 @@ const NAV_ITEMS = [
   { label: 'Home', path: '/' },
   { label: 'Study spaces', path: '/study-spaces' },
   { label: 'Study buddy', path: '/study-buddy' },
-  { label: 'Accessories', path: null },
+  { label: 'Accessories', path: '/accessories' },
 ];
 
 function App() {
