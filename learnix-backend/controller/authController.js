@@ -3,6 +3,7 @@ import { comparePassword } from "../utils/helpers.js";
 import jwt from "jsonwebtoken";
 
 const lifetime = 3600000;
+const isProd = process.env.NODE_ENV === "production";
 
 export const login = async (req, res) => {
   const { email, password } = req.body;
@@ -18,10 +19,7 @@ export const login = async (req, res) => {
   }
 
   const token = jwt.sign(
-    {
-      id: user.id,
-      email: user.email,
-    },
+    { id: user.id, email: user.email },
     process.env.JWT_SECRET,
     { expiresIn: lifetime / 1000 },
   );
@@ -29,8 +27,8 @@ export const login = async (req, res) => {
   res.cookie("token", token, {
     maxAge: lifetime,
     httpOnly: true,
-    secure: true,
-    sameSite: "none",
+    secure: isProd,
+    sameSite: isProd ? "none" : "lax",
     path: "/",
   });
 
@@ -41,8 +39,8 @@ export const login = async (req, res) => {
 export const logout = (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
-    secure: true,
-    sameSite: "none",
+    secure: isProd,
+    sameSite: isProd ? "none" : "lax",
     path: "/",
   });
   return res.status(200).json({ message: "Logout successful" });

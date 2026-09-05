@@ -22,6 +22,7 @@ function SignUp() {
 
     const response = await fetch(`${API_URL}/users`, {
       method: 'POST',
+      credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ firstName, lastName, email, password }),
     });
@@ -33,7 +34,7 @@ function SignUp() {
       return;
     }
 
-    navigate('/login');
+    navigate('/');
   };
 
   return (
@@ -52,55 +53,28 @@ function SignUp() {
           <div className="name-row">
             <div className="name-field">
               <label>First Name</label>
-              <input
-                type="text"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-              />
+              <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
             </div>
-
             <div className="name-field">
               <label>Last Name</label>
-              <input
-                type="text"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-              />
+              <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} />
             </div>
           </div>
 
           <label>Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
 
           <label>Password</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
 
           <label>Confirm Password</label>
-          <input
-            type="password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-          />
+          <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
 
-          <button
-            className="signup-btn"
-            onClick={handleSubmit}
-          >
-            Sign Up
-          </button>
+          <button className="signup-btn" onClick={handleSubmit}>Sign Up</button>
 
           <p className="login-text">
             Already Have a Account? <a href="/login">Sign In</a>
           </p>
-
         </div>
       </div>
     </div>

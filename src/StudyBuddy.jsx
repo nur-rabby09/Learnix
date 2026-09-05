@@ -1,16 +1,10 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import './App.css';
 import './StudyBuddy.css';
 import Footer from './Footer.jsx';
+import Navbar from './Navbar.jsx';
 import heroImg from './assets/image001.jpg';
 
-const NAV_ITEMS = [
-  { label: 'Home', path: '/' },
-  { label: 'Study spaces', path: '/study-spaces' },
-  { label: 'Study buddy', path: '/study-buddy' },
-  { label: 'Accessories', path: '/accessories'},
-];
 const DUMMY_POSTS = [
   {
     id: 1,
@@ -39,7 +33,6 @@ const DUMMY_POSTS = [
 ];
 
 function StudyBuddy() {
-  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
 
   const handleCreatePost = () => {
@@ -57,25 +50,7 @@ function StudyBuddy() {
 
   return (
     <div>
-
-      {/* Top navbar */}
-      <div className="navbar">
-        <span className="logo" onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>Learnix</span>
-        <div className="nav-links">
-          {NAV_ITEMS.map((item) => (
-            <span
-              key={item.label}
-              className={item.label === 'Study buddy' ? 'active' : ''}
-              onClick={() => item.path && navigate(item.path)}
-            >
-              {item.label}
-            </span>
-          ))}
-        </div>
-        <div className="nav-actions">
-          <button className="btn-solid" onClick={() => navigate('/signup')}>Sign up</button>
-        </div>
-      </div>
+      <Navbar active="Study buddy" />
 
       {/* Hero banner with background image and search bar */}
       <div className="sb-hero" style={{ backgroundImage: `linear-gradient(90deg, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.1) 100%), url(${heroImg})` }}>
@@ -137,7 +112,6 @@ function StudyBuddy() {
       </div>
 
       <Footer />
-
     </div>
   );
 }

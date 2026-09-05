@@ -8,7 +8,7 @@ import Signup from './Signup.jsx';
 import StudySpaces from './StudySpaces.jsx';
 import StudyBuddy from './StudyBuddy.jsx';
 import Accessories from './Accessories.jsx';
-
+import Profile from './Profile.jsx';
 createRoot(document.getElementById('root')).render(
   <StrictMode>
      <BrowserRouter>

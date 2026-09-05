@@ -1,5 +1,9 @@
 import { hashPassword } from "../utils/helpers.js";
 import User from "../model/user.js";
+import jwt from "jsonwebtoken";
+
+const lifetime = 3600000;
+const isProd = process.env.NODE_ENV === "production";
 
 export const createUser = async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
@@ -19,6 +23,21 @@ export const createUser = async (req, res) => {
     });
 
     await newUser.save();
+
+    const token = jwt.sign(
+      { id: newUser.id, email: newUser.email },
+      process.env.JWT_SECRET,
+      { expiresIn: lifetime / 1000 },
+    );
+
+    res.cookie("token", token, {
+      maxAge: lifetime,
+      httpOnly: true,
+      secure: isProd,
+      sameSite: isProd ? "none" : "lax",
+      path: "/",
+    });
+
     return res.status(201).json({ message: "New user added successfully" });
   } catch (err) {
     return res.status(400).json(err);

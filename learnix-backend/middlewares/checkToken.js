@@ -1,5 +1,7 @@
 import jwt from "jsonwebtoken";
 
+const isProd = process.env.NODE_ENV === "production";
+
 const checkToken = (req, res, next) => {
   const { token } = req.cookies;
 
@@ -11,8 +13,8 @@ const checkToken = (req, res, next) => {
     if (err) {
       res.clearCookie("token", {
         httpOnly: true,
-        secure: true,
-        sameSite: "none",
+        secure: isProd,
+        sameSite: isProd ? "none" : "lax",
         path: "/",
       });
       return res.status(401).json({ error: "Invalid token" });

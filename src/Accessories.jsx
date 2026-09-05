@@ -1,17 +1,10 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import "./App.css";
 import "./StudyBuddy.css";
 import "./Accessories.css";
 import heroImg from "./assets/accessories.jpg";
 import Footer from "./Footer.jsx";
-
-const NAV_ITEMS = [
-  { label: "Home", path: "/" },
-  { label: "Study spaces", path: "/study-spaces" },
-  { label: "Study buddy", path: "/study-buddy" },
-  { label: "Accessories", path: "/accessories" },
-];
+import Navbar from "./Navbar.jsx";
 
 const CATEGORIES = ["All", "Calculators", "Chargers", "Books", "Other"];
 
@@ -26,7 +19,6 @@ const ITEMS = [
 
 function Accessories() {
   const [activeCategory, setActiveCategory] = useState("All");
-  const navigate = useNavigate();
 
   const filteredItems =
     activeCategory === "All"
@@ -35,28 +27,7 @@ function Accessories() {
 
   return (
     <div>
-      {/* Top navbar */}
-      <div className="navbar">
-        <span className="logo" onClick={() => navigate("/")} style={{ cursor: "pointer" }}>
-          Learnix
-        </span>
-        <div className="nav-links">
-          {NAV_ITEMS.map((item) => (
-            <span
-              key={item.label}
-              className={item.label === "Accessories" ? "active" : ""}
-              onClick={() => item.path && navigate(item.path)}
-            >
-              {item.label}
-            </span>
-          ))}
-        </div>
-        <div className="nav-actions">
-          <button className="btn-solid" onClick={() => navigate("/signup")}>
-            Sign up
-          </button>
-        </div>
-      </div>
+      <Navbar active="Accessories" />
 
       {/* Hero banner with background image and quote */}
       <div

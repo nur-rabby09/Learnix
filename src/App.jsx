@@ -2,47 +2,20 @@ import { useNavigate } from 'react-router-dom';
 import './App.css';
 import "./StudyBuddy.css";
 import Footer from './Footer.jsx';
-
-const NAV_ITEMS = [
-  { label: 'Home', path: '/' },
-  { label: 'Study spaces', path: '/study-spaces' },
-  { label: 'Study buddy', path: '/study-buddy' },
-  { label: 'Accessories', path: '/accessories' },
-];
+import Navbar from './Navbar.jsx';
 
 function App() {
   const navigate = useNavigate();
 
   return (
     <div>
+      <Navbar active="Home" />
 
-      {/* Top navbar */}
-      <div className="navbar">
-        <span className="logo">Learnix</span>
-        <div className="nav-links">
-          {NAV_ITEMS.map((item) => (
-            <span
-              key={item.label}
-              className={item.label === 'Home' ? 'active' : ''}
-              onClick={() => item.path && navigate(item.path)}
-            >
-              {item.label}
-            </span>
-          ))}
-        </div>
-        <div className="nav-actions">
-          <button className="btn-solid" onClick={() => navigate('/signup')}>Sign up</button>
-        </div>
-      </div>
-
-      {/* Hero with background photo and quote */}
       <div className="hero">
-        <h1>"Where quiet corners meet <span className="sb-highlight">great company"</span>
-        </h1>
+        <h1>"Where quiet corners meet <span className="sb-highlight">great company"</span></h1>
         <p>Quiet corners, open seats, and study partners.</p>
       </div>
 
-      {/* About Learnix */}
       <h2 className="section-title">Why Learnix</h2>
       <div className="row">
         <div className="card feature-card">
@@ -62,7 +35,6 @@ function App() {
         </div>
       </div>
 
-      {/* How it works */}
       <h2 className="section-title">How it works</h2>
       <div className="steps">
         <div className="step">
@@ -82,16 +54,13 @@ function App() {
         </div>
       </div>
 
-      {/* CTA banner */}
       <div className="cta-banner">
         <h2>Ready to find your spot?</h2>
         <p>Join Learnix and never waste time hunting for a seat again.</p>
         <button className="btn-solid cta-btn" onClick={() => navigate('/signup')}>Get started</button>
       </div>
 
-      {/* Footer */}
       <Footer />
-
     </div>
   );
 }

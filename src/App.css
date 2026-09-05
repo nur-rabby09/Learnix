@@ -77,6 +77,10 @@ body {
   cursor: pointer;
   white-space: nowrap;
 }
+.nav-username {
+  font-weight: 600;
+  color: green;
+}
 
 /* Hero with background photo */
 .hero {
