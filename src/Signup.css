@@ -54,6 +54,13 @@
   text-align: center;
 }
 
+.signup-error {
+  color: #c0392b;
+  font-size: 14px;
+  margin: 0 0 16px;
+  text-align: center;
+}
+
 .name-row {
   display: flex;
   gap: 15px;

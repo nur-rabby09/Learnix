@@ -1,12 +1,32 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Login.css';
+import { API_URL } from './config.js';
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
-  const handleSubmit = () => {
-    console.log('Sign in:', email, password);
+  const handleSubmit = async () => {
+    setError('');
+
+    const response = await fetch(`${API_URL}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ email, password }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      setError(data.error || 'Something went wrong');
+      return;
+    }
+
+    navigate('/');
   };
 
   return (
@@ -20,6 +40,8 @@ function Login() {
 
       <div className="login-card">
         <p className="eyebrow">Welcome back</p>
+
+          {error && <p className="login-error">{error}</p>}
 
           <label>Email</label>
           <input

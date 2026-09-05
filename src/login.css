@@ -98,6 +98,13 @@
   cursor: pointer;
 }
 
+.login-error {
+  color: #c0392b;
+  font-size: 14px;
+  margin: -8px 0 16px;
+  text-align: center;
+}
+
 .signup-text {
   text-align: center;
   font-size: 14px;

@@ -1,5 +1,7 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './SignUp.css';
+import { API_URL } from './config.js';
 
 function SignUp() {
   const [firstName, setFirstName] = useState('');
@@ -7,9 +9,31 @@ function SignUp() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
-  const handleSubmit = () => {
-    console.log('Sign up:', firstName, lastName, email, password, confirmPassword);
+  const handleSubmit = async () => {
+    setError('');
+
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+
+    const response = await fetch(`${API_URL}/users`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ firstName, lastName, email, password }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      setError(data.error || 'Something went wrong');
+      return;
+    }
+
+    navigate('/login');
   };
 
   return (
@@ -22,6 +46,9 @@ function SignUp() {
         <h2 className="signup-title">Sign Up</h2>
         <div className="signup-card">
           <p className="signup-eyebrow">Create Account</p>
+
+          {error && <p className="signup-error">{error}</p>}
+
           <div className="name-row">
             <div className="name-field">
               <label>First Name</label>
