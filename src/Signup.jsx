@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './SignUp.css';
-import { API_URL } from './config.js';
+import './Signup.css';
+import { API_URL } from './Config.js';
 
 function SignUp() {
   const [firstName, setFirstName] = useState('');
@@ -40,7 +40,9 @@ function SignUp() {
   return (
     <div className="signup-page">
       <div className="navbar">
-        <span className="logo">Learnix</span>
+        <span className="logo" style={{ cursor: 'pointer' }} onClick={() => navigate('/')}>
+          Learnix
+        </span>
       </div>
 
       <div className="signup-wrapper">

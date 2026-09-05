@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './Login.css';
-import { API_URL } from './config.js';
+import './login.css';
+import { API_URL } from './Config.js';
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -32,14 +32,16 @@ function Login() {
   return (
     <div className="login-page">
       <div className="navbar">
-        <span className="logo">Learnix</span>
+        <span className="logo" style={{ cursor: 'pointer' }} onClick={() => navigate('/')}>
+          Learnix
+        </span>
       </div>
 
       <div className="login-wrapper">
         <h2 className="login-title">Sign In</h2>
 
-      <div className="login-card">
-        <p className="eyebrow">Welcome back</p>
+        <div className="login-card">
+          <p className="eyebrow">Welcome back</p>
 
           {error && <p className="login-error">{error}</p>}
 

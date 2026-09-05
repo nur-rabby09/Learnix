@@ -9,6 +9,7 @@ import StudySpaces from './StudySpaces.jsx';
 import StudyBuddy from './StudyBuddy.jsx';
 import Accessories from './Accessories.jsx';
 import Profile from './Profile.jsx';
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
      <BrowserRouter>
@@ -19,6 +20,7 @@ createRoot(document.getElementById('root')).render(
         <Route path="/study-spaces" element={<StudySpaces />} />
         <Route path="/study-buddy" element={<StudyBuddy />} />
         <Route path="/accessories" element={<Accessories />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>

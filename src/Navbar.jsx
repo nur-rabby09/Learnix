@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { API_URL } from './config.js';
+import { API_URL } from './Config.js';
 
 const NAV_ITEMS = [
   { label: 'Home', path: '/' },
@@ -25,7 +25,9 @@ function Navbar({ active }) {
 
   return (
     <div className="navbar">
-      <span className="logo">Learnix</span>
+      <span className="logo" style={{ cursor: 'pointer' }} onClick={() => navigate('/')}>
+        Learnix
+      </span>
       <div className="nav-links">
         {NAV_ITEMS.map((item) => (
           <span
@@ -47,7 +49,7 @@ function Navbar({ active }) {
             Hi, {user.firstName}
           </span>
         ) : (
-          <button className="btn-solid" onClick={() => navigate('/signup')}>Sign up</button>
+          <button className="btn-solid" onClick={() => navigate('/login')}>Sign in</button>
         )}
       </div>
     </div>
