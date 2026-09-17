@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './Signup.css';
 import { API_URL } from './Config.js';
 
-const emailRegex = /^[a-z0-9._%+-]+@(gmail|yahoo|outlook|hotmail|live)\.com$/;
+const emailRegex = /^[a-z0-9]+@(gmail|yahoo|outlook|hotmail|live)\.com$/;
 
 function SignUp() {
   const [firstName, setFirstName] = useState('');
