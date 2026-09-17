@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 
 const lifetime = 3600000;
 const isProd = process.env.NODE_ENV === "production";
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const emailRegex = /^[a-z0-9._%+-]+@(gmail|yahoo|outlook|hotmail|live)\.com$/;
 
 export const createUser = async (req, res) => {
   const { firstName, lastName, email, password } = req.body;

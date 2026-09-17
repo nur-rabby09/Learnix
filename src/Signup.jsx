@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './Signup.css';
 import { API_URL } from './Config.js';
 
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const emailRegex = /^[a-z0-9._%+-]+@(gmail|yahoo|outlook|hotmail|live)\.com$/;
 
 function SignUp() {
   const [firstName, setFirstName] = useState('');
@@ -23,7 +23,7 @@ function SignUp() {
     }
 
     if (!emailRegex.test(email)) {
-      setError('Enter a valid email address');
+      setError('Enter a valid email address (e.g. name@gmail.com)');
       return;
     }
 

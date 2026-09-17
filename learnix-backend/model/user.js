@@ -13,7 +13,10 @@ const userSchema = new Schema({
     type: Schema.Types.String,
     required: true,
     unique: true,
-    match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Invalid email format"],
+    match: [
+      /^[a-z0-9._%+-]+@(gmail|yahoo|outlook|hotmail|live)\.com$/,
+      "Invalid email format",
+    ],
   },
   password: {
     type: Schema.Types.String,
