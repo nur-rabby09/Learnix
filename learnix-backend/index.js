@@ -6,6 +6,7 @@ import "dotenv/config";
 
 import authRouter from "./routes/auth.js";
 import userRouter from "./routes/users.js";
+import postRouter from "./routes/posts.js";
 import log from "./middlewares/logger.js";
 
 const app = express();
@@ -37,6 +38,7 @@ app.get("/api", (req, res) => res.json({ message: "API is working" }));
 
 app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
+app.use("/api/posts", postRouter);
 
 app.listen(PORT, () => {
   console.log(`Server listening on port: ${PORT}`);

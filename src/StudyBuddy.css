@@ -79,6 +79,27 @@
   white-space: nowrap;
 }
 
+.sb-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.sb-guest-message {
+  font-size: 14px;
+  color: #b3261e;
+  background: #fdeceb;
+  padding: 8px 14px;
+  border-radius: 20px;
+}
+
+.sb-status-text {
+  text-align: center;
+  color: #666;
+  padding: 60px 20px;
+}
+
 .sb-feed {
   padding: 20px 40px 70px;
 }
@@ -112,6 +133,13 @@
   color: #222;
 }
 
+.sb-card-subject {
+  font-size: 13px;
+  font-weight: 600;
+  color: green;
+  margin: 0 0 10px;
+}
+
 .sb-card-desc {
   font-size: 15px;
   line-height: 1.5;
@@ -139,15 +167,22 @@
   flex-wrap: wrap;
 }
 
-.sb-email {
+.sb-contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sb-email,
+.sb-phone {
   font-size: 13px;
   color: #555;
   word-break: break-all;
 }
 
-.sb-interested-btn {
-  font-size: 14px;
-  padding: 8px 18px;
+.sb-delete-btn {
+  font-size: 13px;
+  padding: 6px 14px;
   white-space: nowrap;
 }
 
@@ -160,4 +195,83 @@
 .sb-empty p {
   font-size: 18px;
   margin: 0 0 20px;
+}
+
+/* Create post modal */
+.sb-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 20px;
+}
+
+.sb-modal {
+  background: white;
+  border-radius: 12px;
+  padding: 30px;
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.sb-modal h3 {
+  margin: 0 0 20px;
+  font-size: 22px;
+  color: #222;
+}
+
+.sb-modal form {
+  display: flex;
+  flex-direction: column;
+}
+
+.sb-modal label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin: 14px 0 6px;
+}
+
+.sb-modal input,
+.sb-modal textarea {
+  padding: 10px 12px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.sb-modal input:focus,
+.sb-modal textarea:focus {
+  outline: none;
+  border-color: green;
+}
+
+.sb-form-note {
+  font-size: 13px;
+  color: #777;
+  margin: 14px 0 0;
+}
+
+.sb-form-error {
+  font-size: 14px;
+  color: #b3261e;
+  background: #fdeceb;
+  padding: 10px 14px;
+  border-radius: 6px;
+  margin: 0 0 10px;
+}
+
+.sb-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
 }
