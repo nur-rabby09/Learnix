@@ -135,6 +135,7 @@ body {
 .section-title {
   font-size: 30px;
   padding: 60px 20px 20px;
+  text-align: center;
 }
 
 /* Cards row */

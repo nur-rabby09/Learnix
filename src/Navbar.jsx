@@ -25,9 +25,7 @@ function Navbar({ active }) {
 
   return (
     <div className="navbar">
-      <span className="logo" style={{ cursor: 'pointer' }} onClick={() => navigate('/')}>
-        Learnix
-      </span>
+     <span className="logo">Learnix</span>
       <div className="nav-links">
         {NAV_ITEMS.map((item) => (
           <span
