@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import './Signup.css';
 import { API_URL } from './Config.js';
 
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 function SignUp() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -14,6 +16,21 @@ function SignUp() {
 
   const handleSubmit = async () => {
     setError('');
+
+    if (!firstName || !lastName) {
+      setError('First and last name are required');
+      return;
+    }
+
+    if (!emailRegex.test(email)) {
+      setError('Enter a valid email address');
+      return;
+    }
+
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters');
+      return;
+    }
 
     if (password !== confirmPassword) {
       setError('Passwords do not match');
@@ -34,7 +51,7 @@ function SignUp() {
       return;
     }
 
-    navigate('/');
+    navigate('/', { replace: true });
   };
 
   return (

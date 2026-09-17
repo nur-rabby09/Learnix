@@ -4,9 +4,22 @@ import jwt from "jsonwebtoken";
 
 const lifetime = 3600000;
 const isProd = process.env.NODE_ENV === "production";
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export const createUser = async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
+
+  if (!firstName || !lastName || !email || !password) {
+    return res.status(400).json({ error: "All fields are required" });
+  }
+
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({ error: "Invalid email address" });
+  }
+
+  if (password.length < 6) {
+    return res.status(400).json({ error: "Password must be at least 6 characters" });
+  }
 
   try {
     const existingUser = await User.findOne({ email }).select(["email"]);
