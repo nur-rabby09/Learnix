@@ -47,3 +47,118 @@
 .ss-hero {
   min-height: 75vh;
 }
+
+/* Photo slot at the top of each space card. Empty/gray for now until
+   Cloudinary uploads are wired up on the developer-side listing flow. */
+.sb-card-photo {
+  width: 100%;
+  height: 160px;
+  border-radius: 8px;
+  object-fit: cover;
+  margin-bottom: 16px;
+}
+
+.sb-card-photo--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f3f4f3;
+  border: 1px dashed #ccc;
+  color: #999;
+  font-size: 13px;
+}
+
+.ss-confirm-banner {
+  max-width: 700px;
+  margin: 0 auto 20px;
+  padding: 12px 20px;
+  background: #e3f5e9;
+  color: green;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.ss-error-banner {
+  background: #fdecea;
+  color: #c0392b;
+}
+
+/* Reservation modal */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modal-box {
+  background: white;
+  border-radius: 12px;
+  padding: 32px;
+  width: 100%;
+  max-width: 420px;
+  position: relative;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.modal-close {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 22px;
+  line-height: 1;
+  color: #888;
+  cursor: pointer;
+}
+
+.modal-title {
+  margin: 0 0 6px;
+  font-size: 20px;
+  color: #222;
+}
+
+.modal-subtitle {
+  margin: 0 0 20px;
+  font-size: 14px;
+  color: #666;
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.modal-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  color: #444;
+}
+
+.modal-form input {
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 15px;
+}
+
+.modal-error {
+  color: #c0392b;
+  font-size: 13px;
+  margin: 0;
+}
+
+.modal-submit {
+  margin-top: 6px;
+  width: 100%;
+  padding: 12px;
+}

@@ -1,27 +1,134 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 import "./StudyBuddy.css";
 import "./StudySpaces.css";
 import Footer from "./Footer.jsx";
 import Navbar from "./Navbar.jsx";
 import heroImg from "./assets/studySpace.jpg";
+import { API_URL } from "./Config.js";
 
 const CATEGORIES = ["All", "Library", "Cafe", "Lounge"];
 
-const SPACES = [
-  { name: "AUST Central Library", location: "3rd Floor, Main Building", category: "Library", seatsAvailable: 12, seatsTotal: 40 },
-  { name: "CSE Building Lounge", location: "Ground Floor, CSE Building", category: "Lounge", seatsAvailable: 0, seatsTotal: 20 },
-  { name: "Campus Cafe", location: "Near West Gate", category: "Cafe", seatsAvailable: 5, seatsTotal: 15 },
-  { name: "Quiet Study Room", location: "4th Floor, Library", category: "Library", seatsAvailable: 3, seatsTotal: 10 },
-  { name: "Rooftop Lounge", location: "6th Floor, Academic Block", category: "Lounge", seatsAvailable: 8, seatsTotal: 25 },
-  { name: "Coffee Corner", location: "1st Floor, Student Center", category: "Cafe", seatsAvailable: 0, seatsTotal: 12 },
-];
+// A blank placeholder card shown where a space's photo will eventually
+// live. Swap this for a real <img src={space.photo}> once Cloudinary
+// image uploads are wired up on the "List a Space" (developer/admin) side.
+function PhotoPlaceholder() {
+  return (
+    <div className="sb-card-photo sb-card-photo--empty">
+      <span>Photo coming soon</span>
+    </div>
+  );
+}
+
+function ReserveModal({ space, onClose, onConfirm }) {
+  const [form, setForm] = useState({ name: "", phone: "", email: "", seats: 1 });
+  const [error, setError] = useState("");
+
+  const handleChange = (field) => (e) => {
+    setForm((prev) => ({ ...prev, [field]: e.target.value }));
+  };
+
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!form.name.trim() || !form.phone.trim() || !form.email.trim()) {
+      setError("Name, phone number, and email are all required.");
+      return;
+    }
+    if (!/^\S+@\S+\.\S+$/.test(form.email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
+    const seatsRequested = Number(form.seats) || 1;
+    if (seatsRequested < 1 || seatsRequested > space.seatsAvailable) {
+      setError(`You can reserve between 1 and ${space.seatsAvailable} seat(s).`);
+      return;
+    }
+
+    setSubmitting(true);
+    const serverError = await onConfirm({ ...form, seats: seatsRequested });
+    setSubmitting(false);
+    if (serverError) setError(serverError);
+  };
+
+  return (
+    <div className="modal-backdrop" onClick={onClose}>
+      <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+        <button className="modal-close" onClick={onClose} aria-label="Close">×</button>
+
+        <h2 className="modal-title">Reserve at {space.name}</h2>
+        <p className="modal-subtitle">{space.location} · {space.seatsAvailable} seat(s) open</p>
+
+        <form onSubmit={handleSubmit} className="modal-form">
+          <label>
+            Full name
+            <input type="text" value={form.name} onChange={handleChange("name")} placeholder="Your name" />
+          </label>
+
+          <label>
+            Phone number
+            <input type="tel" value={form.phone} onChange={handleChange("phone")} placeholder="01XXXXXXXXX" />
+          </label>
+
+          <label>
+            Email
+            <input type="email" value={form.email} onChange={handleChange("email")} placeholder="you@example.com" />
+          </label>
+
+          <label>
+            Number of seats
+            <input
+              type="number"
+              min="1"
+              max={space.seatsAvailable}
+              value={form.seats}
+              onChange={handleChange("seats")}
+            />
+          </label>
+
+          {error && <p className="modal-error">{error}</p>}
+
+          <button type="submit" className="btn-solid modal-submit" disabled={submitting}>
+            {submitting ? "Reserving..." : "Confirm Reservation"}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
 
 function StudySpaces() {
+  const [spaces, setSpaces] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
+  const [reservingSpace, setReservingSpace] = useState(null);
+  const [confirmedMessage, setConfirmedMessage] = useState("");
 
-  const filteredSpaces = SPACES.filter((space) => {
+  useEffect(() => {
+    const loadSpaces = async () => {
+      try {
+        const response = await fetch(`${API_URL}/study-spaces`, {
+          credentials: "include",
+        });
+        if (!response.ok) throw new Error("Failed to load study spaces");
+        const data = await response.json();
+        setSpaces(data);
+      } catch (err) {
+        setLoadError("Could not load study spaces. Is the backend running?");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadSpaces();
+  }, []);
+
+  const filteredSpaces = spaces.filter((space) => {
     const matchesCategory = activeCategory === "All" || space.category === activeCategory;
     const matchesSearch = space.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       space.location.toLowerCase().includes(searchTerm.toLowerCase());
@@ -30,6 +137,33 @@ function StudySpaces() {
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
+  };
+
+  const handleReserveConfirm = async (formValues) => {
+    const response = await fetch(
+      `${API_URL}/study-spaces/${reservingSpace._id}/reserve`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(formValues),
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return data.error || "Something went wrong";
+    }
+
+    // Update this space's seat count in place with what the server confirmed.
+    setSpaces((prev) =>
+      prev.map((s) => (s._id === data.space._id ? data.space : s))
+    );
+    setConfirmedMessage(`Reserved ${formValues.seats} seat(s) at ${reservingSpace.name}.`);
+    setReservingSpace(null);
+    setTimeout(() => setConfirmedMessage(""), 4000);
+    return null; // no error
   };
 
   return (
@@ -58,14 +192,16 @@ function StudySpaces() {
         </form>
       </div>
 
-      {/* Page header */}
+      {/* Page header - listing new spaces is developer-only (seeded/coded), not user-facing */}
       <div className="sb-header">
         <div>
           <h1>Study Spaces</h1>
           <p>See where seats are open right now.</p>
         </div>
-        <button className="btn-solid sb-create-btn">+ List a Space</button>
       </div>
+
+      {confirmedMessage && <div className="ss-confirm-banner">{confirmedMessage}</div>}
+      {loadError && <div className="ss-confirm-banner ss-error-banner">{loadError}</div>}
 
       {/* Category filter */}
       <div className="acc-category-row">
@@ -82,9 +218,21 @@ function StudySpaces() {
 
       {/* Spaces feed */}
       <div className="sb-feed">
+        {loading && <p className="sb-empty">Loading study spaces...</p>}
+
+        {!loading && !loadError && filteredSpaces.length === 0 && (
+          <p className="sb-empty">No study spaces match your search.</p>
+        )}
+
         <div className="sb-grid">
-          {filteredSpaces.map((space) => (
-            <div className="sb-card" key={space.name}>
+          {!loading && filteredSpaces.map((space) => (
+            <div className="sb-card" key={space._id}>
+              {space.photoUrl ? (
+                <img className="sb-card-photo" src={space.photoUrl} alt={space.name} />
+              ) : (
+                <PhotoPlaceholder />
+              )}
+
               <h3 className="sb-card-title">{space.name}</h3>
               <p className="sb-card-desc">{space.location}</p>
 
@@ -102,14 +250,26 @@ function StudySpaces() {
               </div>
 
               <div className="sb-contact">
-                <button className="btn-solid sb-interested-btn" disabled={space.seatsAvailable === 0}>
-                  Reserve
+                <button
+                  className="btn-solid sb-interested-btn"
+                  disabled={space.seatsAvailable === 0}
+                  onClick={() => setReservingSpace(space)}
+                >
+                  {space.seatsAvailable === 0 ? "Full" : "Reserve"}
                 </button>
               </div>
             </div>
           ))}
         </div>
       </div>
+
+      {reservingSpace && (
+        <ReserveModal
+          space={reservingSpace}
+          onClose={() => setReservingSpace(null)}
+          onConfirm={handleReserveConfirm}
+        />
+      )}
 
       <Footer />
     </div>
