@@ -26,7 +26,7 @@ function Login() {
       return;
     }
 
-    navigate('/');
+    navigate('/', { replace: true });
   };
 
   return (

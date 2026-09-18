@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './App.css';
 import "./StudyBuddy.css";
@@ -8,6 +9,11 @@ function App() {
   const navigate = useNavigate();
 
   return (
+  // Warn before the user navigates away from the site entirely (e.g.
+  // pressing Back past the app's first page, closing the tab, or
+  // refreshing). Browsers show their own built-in confirmation dialog
+  // here for security reasons - the message text can't be customized,
+  // but the confirm/cancel behavior works as expected.
     <div>
       <Navbar active="Home" />
 
