@@ -8,6 +8,7 @@ import authRouter from "./routes/auth.js";
 import userRouter from "./routes/users.js";
 import studySpaceRouter from "./routes/studySpaces.js";
 import postRouter from "./routes/posts.js";
+import accessoryRouter from "./routes/accessories.js";
 import log from "./middlewares/logger.js";
 
 const app = express();
@@ -41,6 +42,7 @@ app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
 app.use("/api/study-spaces", studySpaceRouter);
 app.use("/api/posts", postRouter);
+app.use("/api/accessories", accessoryRouter);
 
 app.listen(PORT, () => {
   console.log(`Server listening on port: ${PORT}`);
