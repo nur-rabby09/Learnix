@@ -34,10 +34,20 @@ export const createStudySpace = async (req, res) => {
 // Body: { name, phone, email, seats }
 export const reserveStudySpace = async (req, res) => {
   const { id } = req.params;
-  const { name, phone, email, seats } = req.body;
+  const { name, phone, email, seats, reservationDate } = req.body;
 
-  if (!name || !phone || !email) {
-    return res.status(400).json({ error: "name, phone and email are required" });
+  if (!name || !phone || !email || !reservationDate) {
+    return res.status(400).json({ error: "name, phone, email and reservation date are required" });
+  }
+
+  const parsedDate = new Date(reservationDate);
+  if (isNaN(parsedDate.getTime())) {
+    return res.status(400).json({ error: "Invalid reservation date" });
+  }
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  if (parsedDate < today) {
+    return res.status(400).json({ error: "Reservation date can't be in the past" });
   }
 
   const seatsRequested = Number(seats) || 1;
@@ -70,6 +80,7 @@ export const reserveStudySpace = async (req, res) => {
       phone,
       email,
       seats: seatsRequested,
+      reservationDate: parsedDate,
     });
 
     return res.status(201).json({ space, reservation });

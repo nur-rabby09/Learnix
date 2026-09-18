@@ -21,7 +21,7 @@ function PhotoPlaceholder() {
 }
 
 function ReserveModal({ space, onClose, onConfirm }) {
-  const [form, setForm] = useState({ name: "", phone: "", email: "", seats: 1 });
+  const [form, setForm] = useState({ name: "", phone: "", email: "", seats: 1, reservationDate: "" });
   const [error, setError] = useState("");
 
   const handleChange = (field) => (e) => {
@@ -33,8 +33,8 @@ function ReserveModal({ space, onClose, onConfirm }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!form.name.trim() || !form.phone.trim() || !form.email.trim()) {
-      setError("Name, phone number, and email are all required.");
+    if (!form.name.trim() || !form.phone.trim() || !form.email.trim() || !form.reservationDate) {
+      setError("Name, phone number, email, and reservation date are all required.");
       return;
     }
     if (!/^\S+@\S+\.\S+$/.test(form.email)) {
@@ -86,6 +86,15 @@ function ReserveModal({ space, onClose, onConfirm }) {
               max={space.seatsAvailable}
               value={form.seats}
               onChange={handleChange("seats")}
+            />
+          </label>
+          <label>
+            Reservation date
+            <input
+              type="date"
+              min={new Date().toISOString().split("T")[0]}
+              value={form.reservationDate}
+              onChange={handleChange("reservationDate")}
             />
           </label>
 
@@ -160,8 +169,9 @@ function StudySpaces() {
     setSpaces((prev) =>
       prev.map((s) => (s._id === data.space._id ? data.space : s))
     );
-    setConfirmedMessage(`Reserved ${formValues.seats} seat(s) at ${reservingSpace.name}.`);
-    setReservingSpace(null);
+     const formattedDate = new Date(formValues.reservationDate).toLocaleDateString(undefined, {
+      month: "short", day: "numeric", year: "numeric",});
+          setConfirmedMessage(`Reserved ${formValues.seats} seat(s) at ${reservingSpace.name} for ${formattedDate}.`);    setReservingSpace(null);
     setTimeout(() => setConfirmedMessage(""), 4000);
     return null; // no error
   };

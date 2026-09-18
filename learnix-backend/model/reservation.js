@@ -15,6 +15,7 @@ const reservationSchema = new Schema(
     name: { type: Schema.Types.String, required: true },
     phone: { type: Schema.Types.String, required: true },
     email: { type: Schema.Types.String, required: true },
+    reservationDate: { type: Schema.Types.Date, required: true },
     seats: { type: Schema.Types.Number, required: true, min: 1 },
   },
   { timestamps: true },
