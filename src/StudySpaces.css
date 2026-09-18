@@ -84,6 +84,23 @@
   color: #c0392b;
 }
 
+/* Inline "please log in" pill - matches the Study Buddy page's style */
+.auth-banner-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.auth-banner-pill {
+  display: inline-block;
+  background: #fdecea;
+  color: #c0392b;
+  padding: 10px 20px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
 /* Reservation modal */
 .modal-backdrop {
   position: fixed;

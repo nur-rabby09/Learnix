@@ -7,6 +7,11 @@ import Navbar from "./Navbar.jsx";
 import heroImg from "./assets/studySpace.jpg";
 import { API_URL } from "./Config.js";
 
+// Today's date as "YYYY-MM-DD", used as the minimum selectable reservation
+// date. Kept and sent as a plain string throughout - never wrapped in a
+// JS Date object, so there's no timezone shift or time-of-day involved.
+const todayStr = () => new Date().toISOString().split("T")[0];
+
 const CATEGORIES = ["All", "Library", "Cafe", "Lounge"];
 
 // A blank placeholder card shown where a space's photo will eventually
@@ -21,7 +26,13 @@ function PhotoPlaceholder() {
 }
 
 function ReserveModal({ space, onClose, onConfirm }) {
-  const [form, setForm] = useState({ name: "", phone: "", email: "", seats: 1, reservationDate: "" });
+  const [form, setForm] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    reservationDate: todayStr(),
+    seats: 1,
+  });
   const [error, setError] = useState("");
 
   const handleChange = (field) => (e) => {
@@ -33,12 +44,20 @@ function ReserveModal({ space, onClose, onConfirm }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!form.name.trim() || !form.phone.trim() || !form.email.trim() || !form.reservationDate) {
-      setError("Name, phone number, email, and reservation date are all required.");
+    if (!form.name.trim() || !form.phone.trim() || !form.email.trim()) {
+      setError("Name, phone number, and email are all required.");
       return;
     }
     if (!/^\S+@\S+\.\S+$/.test(form.email)) {
       setError("Please enter a valid email address.");
+      return;
+    }
+    if (!form.reservationDate) {
+      setError("Please choose a reservation date.");
+      return;
+    }
+    if (form.reservationDate < todayStr()) {
+      setError("Please choose today or a future date.");
       return;
     }
 
@@ -79,6 +98,16 @@ function ReserveModal({ space, onClose, onConfirm }) {
           </label>
 
           <label>
+            Reservation date
+            <input
+              type="date"
+              min={todayStr()}
+              value={form.reservationDate}
+              onChange={handleChange("reservationDate")}
+            />
+          </label>
+
+          <label>
             Number of seats
             <input
               type="number"
@@ -86,15 +115,6 @@ function ReserveModal({ space, onClose, onConfirm }) {
               max={space.seatsAvailable}
               value={form.seats}
               onChange={handleChange("seats")}
-            />
-          </label>
-          <label>
-            Reservation date
-            <input
-              type="date"
-              min={new Date().toISOString().split("T")[0]}
-              value={form.reservationDate}
-              onChange={handleChange("reservationDate")}
             />
           </label>
 
@@ -117,6 +137,20 @@ function StudySpaces() {
   const [searchTerm, setSearchTerm] = useState("");
   const [reservingSpace, setReservingSpace] = useState(null);
   const [confirmedMessage, setConfirmedMessage] = useState("");
+  const [user, setUser] = useState(null);
+  const [authChecked, setAuthChecked] = useState(false);
+  const [authNotice, setAuthNotice] = useState(false);
+
+  // Same auth check used in Navbar.jsx - a logged-in user has a valid
+  // session cookie, so GET /users/profile succeeds; otherwise it 401s.
+  useEffect(() => {
+    fetch(`${API_URL}/users/profile`, { credentials: "include" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        setUser(data);
+        setAuthChecked(true);
+      });
+  }, []);
 
   useEffect(() => {
     const loadSpaces = async () => {
@@ -148,6 +182,15 @@ function StudySpaces() {
     e.preventDefault();
   };
 
+  const handleReserveClick = (space) => {
+    if (!user) {
+      setAuthNotice(true);
+      setTimeout(() => setAuthNotice(false), 4000);
+      return;
+    }
+    setReservingSpace(space);
+  };
+
   const handleReserveConfirm = async (formValues) => {
     const response = await fetch(
       `${API_URL}/study-spaces/${reservingSpace._id}/reserve`,
@@ -169,9 +212,12 @@ function StudySpaces() {
     setSpaces((prev) =>
       prev.map((s) => (s._id === data.space._id ? data.space : s))
     );
-     const formattedDate = new Date(formValues.reservationDate).toLocaleDateString(undefined, {
-      month: "short", day: "numeric", year: "numeric",});
-          setConfirmedMessage(`Reserved ${formValues.seats} seat(s) at ${reservingSpace.name} for ${formattedDate}.`);    setReservingSpace(null);
+    // formValues.reservationDate is already a plain "YYYY-MM-DD" string -
+    // shown as-is, no Date object formatting involved.
+    setConfirmedMessage(
+      `Reserved ${formValues.seats} seat(s) at ${reservingSpace.name} for ${formValues.reservationDate}.`
+    );
+    setReservingSpace(null);
     setTimeout(() => setConfirmedMessage(""), 4000);
     return null; // no error
   };
@@ -212,6 +258,11 @@ function StudySpaces() {
 
       {confirmedMessage && <div className="ss-confirm-banner">{confirmedMessage}</div>}
       {loadError && <div className="ss-confirm-banner ss-error-banner">{loadError}</div>}
+      {authNotice && (
+        <div className="auth-banner-wrap">
+          <span className="auth-banner-pill">Please log in to reserve a seat.</span>
+        </div>
+      )}
 
       {/* Category filter */}
       <div className="acc-category-row">
@@ -263,7 +314,7 @@ function StudySpaces() {
                 <button
                   className="btn-solid sb-interested-btn"
                   disabled={space.seatsAvailable === 0}
-                  onClick={() => setReservingSpace(space)}
+                  onClick={() => handleReserveClick(space)}
                 >
                   {space.seatsAvailable === 0 ? "Full" : "Reserve"}
                 </button>
