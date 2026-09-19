@@ -136,7 +136,6 @@ function StudySpaces() {
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
   const [reservingSpace, setReservingSpace] = useState(null);
-  const [confirmedMessage, setConfirmedMessage] = useState("");
   const [user, setUser] = useState(null);
   const [authChecked, setAuthChecked] = useState(false);
   const [authNotice, setAuthNotice] = useState(false);
@@ -214,12 +213,8 @@ function StudySpaces() {
     );
     // formValues.reservationDate is already a plain "YYYY-MM-DD" string -
     // shown as-is, no Date object formatting involved.
-    setConfirmedMessage(
-      `Reserved ${formValues.seats} seat(s) at ${reservingSpace.name} for ${formValues.reservationDate}.`
-    );
     setReservingSpace(null);
-    setTimeout(() => setConfirmedMessage(""), 4000);
-    return null; // no error
+    return null; // no error // no error
   };
 
   return (
@@ -255,8 +250,6 @@ function StudySpaces() {
           <p>See where seats are open right now.</p>
         </div>
       </div>
-
-      {confirmedMessage && <div className="ss-confirm-banner">{confirmedMessage}</div>}
       {loadError && <div className="ss-confirm-banner ss-error-banner">{loadError}</div>}
       {authNotice && (
         <div className="auth-banner-wrap">
