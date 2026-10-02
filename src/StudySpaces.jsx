@@ -7,11 +7,6 @@ import Navbar from "./Navbar.jsx";
 import heroImg from "./assets/studySpace.jpg";
 import { API_URL } from "./Config.js";
 
-// Today's date as "YYYY-MM-DD", used as the minimum selectable reservation
-// date. Kept and sent as a plain string throughout - never wrapped in a
-// JS Date object, so there's no timezone shift or time-of-day involved.
-const todayStr = () => new Date().toISOString().split("T")[0];
-
 const CATEGORIES = ["All", "Library", "Cafe", "Lounge"];
 
 // A blank placeholder card shown where a space's photo will eventually
@@ -30,8 +25,8 @@ function ReserveModal({ space, onClose, onConfirm }) {
     name: "",
     phone: "",
     email: "",
-    reservationDate: todayStr(),
-    seats: 1,
+    reservationDate: "",
+    seats: "1",
   });
   const [error, setError] = useState("");
 
@@ -52,23 +47,21 @@ function ReserveModal({ space, onClose, onConfirm }) {
       setError("Please enter a valid email address.");
       return;
     }
-    if (!form.reservationDate) {
-      setError("Please choose a reservation date.");
-      return;
-    }
-    if (form.reservationDate < todayStr()) {
-      setError("Please choose today or a future date.");
+    if (!form.reservationDate.trim()) {
+      setError("Please enter a reservation date.");
       return;
     }
 
-    const seatsRequested = Number(form.seats) || 1;
-    if (seatsRequested < 1 || seatsRequested > space.seatsAvailable) {
+    const seatsNum = Number(form.seats) || 1;
+    if (seatsNum < 1 || seatsNum > space.seatsAvailable) {
       setError(`You can reserve between 1 and ${space.seatsAvailable} seat(s).`);
       return;
     }
 
     setSubmitting(true);
-    const serverError = await onConfirm({ ...form, seats: seatsRequested });
+    // Both reservationDate and seats are sent to the server as plain
+    // strings (e.g. "2026-09-19" and "1"), matching the raw input values.
+    const serverError = await onConfirm({ ...form, seats: String(seatsNum) });
     setSubmitting(false);
     if (serverError) setError(serverError);
   };
@@ -100,8 +93,8 @@ function ReserveModal({ space, onClose, onConfirm }) {
           <label>
             Reservation date
             <input
-              type="date"
-              min={todayStr()}
+              type="text"
+              placeholder="e.g. 2026-12-09"
               value={form.reservationDate}
               onChange={handleChange("reservationDate")}
             />
@@ -110,9 +103,8 @@ function ReserveModal({ space, onClose, onConfirm }) {
           <label>
             Number of seats
             <input
-              type="number"
-              min="1"
-              max={space.seatsAvailable}
+              type="text"
+              placeholder="e.g. 2"
               value={form.seats}
               onChange={handleChange("seats")}
             />
@@ -211,8 +203,8 @@ function StudySpaces() {
     setSpaces((prev) =>
       prev.map((s) => (s._id === data.space._id ? data.space : s))
     );
-    // formValues.reservationDate is already a plain "YYYY-MM-DD" string -
-    // shown as-is, no Date object formatting involved.
+    // formValues.reservationDate and .seats are both plain, free-typed
+    // strings - shown as-is, no Date object or Number formatting involved.
     setReservingSpace(null);
     return null; // no error // no error
   };
