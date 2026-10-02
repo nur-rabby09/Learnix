@@ -1,5 +1,33 @@
 import { Schema, model } from "mongoose";
 
+const requestSchema = new Schema(
+  {
+    requestedBy: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    name: {
+      type: Schema.Types.String,
+      required: true,
+    },
+    phone: {
+      type: Schema.Types.String,
+      required: true,
+    },
+    location: {
+      type: Schema.Types.String,
+      required: true,
+    },
+    status: {
+      type: Schema.Types.String,
+      enum: ["pending", "accepted", "declined"],
+      default: "pending",
+    },
+  },
+  { timestamps: true },
+);
+
 const accessorySchema = new Schema(
   {
     name: {
@@ -33,6 +61,10 @@ const accessorySchema = new Schema(
     available: {
       type: Schema.Types.Boolean,
       default: true,
+    },
+    requests: {
+      type: [requestSchema],
+      default: [],
     },
     createdBy: {
       type: Schema.Types.ObjectId,

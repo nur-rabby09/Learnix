@@ -43,3 +43,126 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+.acc-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.acc-modal-text {
+  font-size: 15px;
+  line-height: 1.5;
+  color: #555;
+  margin: 0;
+}
+
+.acc-confirm-delete-btn {
+  background: #b3261e;
+}
+
+.acc-confirm-delete-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.acc-list-message {
+  text-align: center;
+  color: #666;
+  padding: 20px 0;
+  margin: 0;
+}
+
+.acc-request-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+}
+
+.acc-request-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 14px;
+  color: #555;
+  min-width: 0;
+  word-break: break-word;
+}
+
+.acc-request-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #222;
+}
+
+.acc-request-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.acc-accept-btn,
+.acc-decline-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.acc-accept-btn {
+  background: #e3f5e9;
+  color: green;
+  border: 1px solid green;
+}
+
+.acc-accept-btn:hover:not(:disabled) {
+  background: green;
+  color: white;
+}
+
+.acc-decline-btn {
+  background: #fdeceb;
+  color: #b3261e;
+  border: 1px solid #b3261e;
+}
+
+.acc-decline-btn:hover:not(:disabled) {
+  background: #b3261e;
+  color: white;
+}
+
+.acc-accept-btn:disabled,
+.acc-decline-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.acc-request-status {
+  flex-shrink: 0;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+
+.acc-request-status.accepted {
+  background: #e3f5e9;
+  color: green;
+}
+
+.acc-request-status.declined {
+  background: #fdeceb;
+  color: #b3261e;
+}

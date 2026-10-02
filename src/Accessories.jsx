@@ -17,12 +17,18 @@ const EMPTY_FORM = {
   phone: "",
 };
 
+const EMPTY_REQUEST_FORM = {
+  phone: "",
+  location: "",
+};
+
 function Accessories() {
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
 
   const [items, setItems] = useState([]);
-  const [loadingItems, setLoadingItems] = useState(false);
+  const [loadingItems, setLoadingItems] = useState(true);
+  const [myRequests, setMyRequests] = useState({});
 
   const [guestMessage, setGuestMessage] = useState("");
   const [showForm, setShowForm] = useState(false);
@@ -30,7 +36,40 @@ function Accessories() {
   const [formError, setFormError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleting, setDeleting] = useState(false);
+
+  const [requestTarget, setRequestTarget] = useState(null);
+  const [requestForm, setRequestForm] = useState(EMPTY_REQUEST_FORM);
+  const [requestError, setRequestError] = useState("");
+  const [requestSubmitting, setRequestSubmitting] = useState(false);
+
+  const [listItem, setListItem] = useState(null);
+  const [requestList, setRequestList] = useState([]);
+  const [loadingList, setLoadingList] = useState(false);
+  const [listError, setListError] = useState("");
+  const [responding, setResponding] = useState(false);
+
   const isLoggedIn = Boolean(currentUser);
+
+  const fetchItems = () => {
+    fetch(`${API_URL}/accessories`, { credentials: "include" })
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data) => setItems(data))
+      .finally(() => setLoadingItems(false));
+  };
+
+  const fetchMyRequests = () => {
+    fetch(`${API_URL}/accessories/my-requests`, { credentials: "include" })
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data) => {
+        const statusById = {};
+        for (const entry of data) {
+          statusById[entry.accessoryId] = entry.status;
+        }
+        setMyRequests(statusById);
+      });
+  };
 
   useEffect(() => {
     fetch(`${API_URL}/users/profile`, { credentials: "include" })
@@ -38,17 +77,12 @@ function Accessories() {
       .then((data) => {
         setCurrentUser(data);
         setCheckingAuth(false);
+        if (data) {
+          fetchMyRequests();
+        }
       });
     fetchItems();
   }, []);
-
-  const fetchItems = () => {
-    setLoadingItems(true);
-    fetch(`${API_URL}/accessories`, { credentials: "include" })
-      .then((res) => (res.ok ? res.json() : []))
-      .then((data) => setItems(data))
-      .finally(() => setLoadingItems(false));
-  };
 
   const handleAddItem = () => {
     if (!isLoggedIn) {
@@ -94,15 +128,210 @@ function Accessories() {
     }
   };
 
-  const handleDelete = async (itemId) => {
-    const response = await fetch(`${API_URL}/accessories/${itemId}`, {
-      method: "DELETE",
-      credentials: "include",
-    });
+  const askDelete = (item) => {
+    setDeleteTarget(item);
+  };
 
-    if (response.ok) {
-      setItems(items.filter((item) => item._id !== itemId));
+  const cancelDelete = () => {
+    setDeleteTarget(null);
+  };
+
+  const confirmDelete = async () => {
+    const itemId = deleteTarget._id;
+    setDeleting(true);
+
+    try {
+      const response = await fetch(`${API_URL}/accessories/${itemId}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+
+      if (response.ok) {
+        setItems(items.filter((item) => item._id !== itemId));
+      }
+    } finally {
+      setDeleting(false);
+      setDeleteTarget(null);
     }
+  };
+
+  const openRequestForm = (item) => {
+    setRequestError("");
+    setRequestForm(EMPTY_REQUEST_FORM);
+    setRequestTarget(item);
+  };
+
+  const closeRequestForm = () => {
+    setRequestTarget(null);
+  };
+
+  const handleRequestFormChange = (e) => {
+    setRequestForm({ ...requestForm, [e.target.name]: e.target.value });
+  };
+
+  const handleRequestSubmit = async (e) => {
+    e.preventDefault();
+    setRequestError("");
+    setRequestSubmitting(true);
+    const itemId = requestTarget._id;
+
+    try {
+      const response = await fetch(`${API_URL}/accessories/${itemId}/requests`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(requestForm),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setRequestError(data.error || "Something went wrong");
+        setRequestSubmitting(false);
+        return;
+      }
+
+      setMyRequests({ ...myRequests, [itemId]: "pending" });
+      setRequestTarget(null);
+      setRequestSubmitting(false);
+    } catch {
+      setRequestError("Something went wrong");
+      setRequestSubmitting(false);
+    }
+  };
+
+  const openRequestList = async (item) => {
+    setListItem(item);
+    setRequestList([]);
+    setListError("");
+    setLoadingList(true);
+
+    try {
+      const response = await fetch(`${API_URL}/accessories/${item._id}/requests`, {
+        credentials: "include",
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setListError(data.error || "Something went wrong");
+      } else {
+        setRequestList(data);
+      }
+    } catch {
+      setListError("Something went wrong");
+    }
+
+    setLoadingList(false);
+  };
+
+  const closeRequestList = () => {
+    setListItem(null);
+  };
+
+  const answerRequest = async (requestId, status) => {
+    const itemId = listItem._id;
+    setListError("");
+    setResponding(true);
+
+    try {
+      const response = await fetch(
+        `${API_URL}/accessories/${itemId}/requests/${requestId}`,
+        {
+          method: "PATCH",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status }),
+        },
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setListError(data.error || "Something went wrong");
+      } else {
+        setRequestList(data);
+        if (status === "accepted") {
+          setItems(
+            items.map((item) =>
+              item._id === itemId ? { ...item, available: false } : item,
+            ),
+          );
+        }
+      }
+    } catch {
+      setListError("Something went wrong");
+    }
+
+    setResponding(false);
+  };
+
+  const renderActions = (item) => {
+    if (!isLoggedIn) {
+      return null;
+    }
+
+    if (item.createdBy === currentUser._id) {
+      return (
+        <div className="acc-actions">
+          <button
+            className="btn-solid sb-delete-btn"
+            onClick={() => openRequestList(item)}
+          >
+            Request list
+          </button>
+          <button
+            className="btn-outline sb-delete-btn"
+            onClick={() => askDelete(item)}
+          >
+            Delete
+          </button>
+        </div>
+      );
+    }
+
+    const myStatus = myRequests[item._id];
+
+    if (!item.available) {
+      return (
+        <div className="acc-actions">
+          <button className="btn-solid sb-interested-btn" disabled>
+            {myStatus === "accepted" ? "Accepted" : "N/A"}
+          </button>
+        </div>
+      );
+    }
+
+    if (myStatus === "pending") {
+      return (
+        <div className="acc-actions">
+          <button className="btn-solid sb-interested-btn" disabled>
+            Requested
+          </button>
+        </div>
+      );
+    }
+
+    if (myStatus === "declined") {
+      return (
+        <div className="acc-actions">
+          <button className="btn-solid sb-interested-btn" disabled>
+            Declined
+          </button>
+        </div>
+      );
+    }
+
+    return (
+      <div className="acc-actions">
+        <button
+          className="btn-solid sb-interested-btn"
+          onClick={() => openRequestForm(item)}
+        >
+          Request
+        </button>
+      </div>
+    );
   };
 
   return (
@@ -155,18 +384,10 @@ function Accessories() {
                   <div className="sb-contact-info">
                     <span className="sb-phone">📞 {item.phone}</span>
                   </div>
-                  <span className="acc-status available">Available</span>
-                  {isLoggedIn && currentUser && item.createdBy === currentUser._id && (
-                    <button
-                      className="btn-outline sb-delete-btn"
-                      onClick={() => handleDelete(item._id)}
-                    >
-                      Delete
-                    </button>
-                  )}
-                  {isLoggedIn && currentUser && item.createdBy !== currentUser._id && (
-                    <button className="btn-solid sb-interested-btn">Request</button>
-                  )}
+                  <span className={item.available ? "acc-status available" : "acc-status borrowed"}>
+                    {item.available ? "Available" : "Not available"}
+                  </span>
+                  {renderActions(item)}
                 </div>
               </div>
             ))}
@@ -265,6 +486,137 @@ function Accessories() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {deleteTarget && (
+        <div className="sb-modal-overlay" onClick={cancelDelete}>
+          <div className="sb-modal" onClick={(e) => e.stopPropagation()}>
+            <h3>Delete this item?</h3>
+            <p className="acc-modal-text">
+              Are you sure you want to delete "{deleteTarget.item}"? The post and all of its
+              requests will be removed. This can't be undone.
+            </p>
+            <div className="sb-form-actions">
+              <button type="button" className="btn-outline" onClick={cancelDelete}>
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="btn-solid acc-confirm-delete-btn"
+                onClick={confirmDelete}
+                disabled={deleting}
+              >
+                {deleting ? "Deleting..." : "Yes, delete"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {requestTarget && (
+        <div className="sb-modal-overlay" onClick={closeRequestForm}>
+          <div className="sb-modal" onClick={(e) => e.stopPropagation()}>
+            <h3>Request {requestTarget.item}</h3>
+
+            {requestError && <p className="sb-form-error">{requestError}</p>}
+
+            <form onSubmit={handleRequestSubmit}>
+              <label>Mobile number</label>
+              <input
+                type="text"
+                name="phone"
+                value={requestForm.phone}
+                onChange={handleRequestFormChange}
+                required
+              />
+
+              <label>Location</label>
+              <input
+                type="text"
+                name="location"
+                value={requestForm.location}
+                onChange={handleRequestFormChange}
+                required
+              />
+
+              <p className="sb-form-note">
+                The owner will see these details in their request list.
+              </p>
+
+              <div className="sb-form-actions">
+                <button type="button" className="btn-outline" onClick={closeRequestForm}>
+                  Cancel
+                </button>
+                <button type="submit" className="btn-solid" disabled={requestSubmitting}>
+                  {requestSubmitting ? "Sending..." : "Send request"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {listItem && (
+        <div className="sb-modal-overlay" onClick={closeRequestList}>
+          <div className="sb-modal" onClick={(e) => e.stopPropagation()}>
+            <h3>Requests for {listItem.item}</h3>
+
+            {listError && <p className="sb-form-error">{listError}</p>}
+
+            {loadingList ? (
+              <p className="acc-list-message">Loading requests...</p>
+            ) : requestList.length > 0 ? (
+              <div>
+                {requestList.map((request) => (
+                  <div className="acc-request-row" key={request._id}>
+                    <div className="acc-request-info">
+                      <span className="acc-request-name">{request.name}</span>
+                      <span>📞 {request.phone}</span>
+                      <span>📍 {request.location}</span>
+                    </div>
+
+                    {request.status === "pending" ? (
+                      <div className="acc-request-actions">
+                        <button
+                          type="button"
+                          className="acc-accept-btn"
+                          title="Accept"
+                          aria-label="Accept request"
+                          disabled={responding}
+                          onClick={() => answerRequest(request._id, "accepted")}
+                        >
+                          ✓
+                        </button>
+                        <button
+                          type="button"
+                          className="acc-decline-btn"
+                          title="Decline"
+                          aria-label="Decline request"
+                          disabled={responding}
+                          onClick={() => answerRequest(request._id, "declined")}
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ) : (
+                      <span className={`acc-request-status ${request.status}`}>
+                        {request.status === "accepted" ? "Accepted" : "Declined"}
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              !listError && <p className="acc-list-message">No requests yet.</p>
+            )}
+
+            <div className="sb-form-actions">
+              <button type="button" className="btn-outline" onClick={closeRequestList}>
+                Close
+              </button>
+            </div>
           </div>
         </div>
       )}
