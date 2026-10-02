@@ -7,18 +7,34 @@ import Navbar from "./Navbar.jsx";
 import heroImg from "./assets/studySpace.jpg";
 import { API_URL } from "./Config.js";
 
-const CATEGORIES = ["All", "Library", "Cafe", "Lounge"];
+// Same pattern as heroImg above - a plain import per photo.
+import austLibraryImg from "./assets/studySpaces/austlibrary.jpg";
+import austCseImg from "./assets/studySpaces/austcse.jpg";
+import campusCafeImg from "./assets/studySpaces/campuscafe.jpg";
+import studyRoomImg from "./assets/studySpaces/studyroom.jpeg";
+import rooftopImg from "./assets/studySpaces/rooftop.jpeg";
+import cafeImg from "./assets/studySpaces/cafe.webp";
 
-// A blank placeholder card shown where a space's photo will eventually
-// live. Swap this for a real <img src={space.photo}> once Cloudinary
-// image uploads are wired up on the "List a Space" (developer/admin) side.
-function PhotoPlaceholder() {
-  return (
-    <div className="sb-card-photo sb-card-photo--empty">
-      <span>Photo coming soon</span>
-    </div>
-  );
+// Matches each space by its name (already in every document from
+// MongoDB) to the photo imported above.
+const PHOTO_BY_NAME = {
+  "AUST Central Library": austLibraryImg,
+  "CSE Building Lounge": austCseImg,
+  "Campus Cafe": campusCafeImg,
+  "Quiet Study Room": studyRoomImg,
+  "Rooftop Lounge": rooftopImg,
+  "Coffee Corner": cafeImg,
+};
+
+// Builds a Google Maps search link straight from THIS space's own
+// name + location, so every card points to itself correctly.
+// No API key needed - this just opens Maps' normal search page.
+function getMapsUrl(space) {
+  const query = `${space.name}, ${space.location}, Ahsanullah University of Science and Technology, Dhaka`;
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
 }
+
+const CATEGORIES = ["All", "Library", "Cafe", "Lounge"];
 
 function ReserveModal({ space, onClose, onConfirm }) {
   const [form, setForm] = useState({
@@ -59,8 +75,6 @@ function ReserveModal({ space, onClose, onConfirm }) {
     }
 
     setSubmitting(true);
-    // Both reservationDate and seats are sent to the server as plain
-    // strings (e.g. "2026-09-19" and "1"), matching the raw input values.
     const serverError = await onConfirm({ ...form, seats: String(seatsNum) });
     setSubmitting(false);
     if (serverError) setError(serverError);
@@ -199,14 +213,11 @@ function StudySpaces() {
       return data.error || "Something went wrong";
     }
 
-    // Update this space's seat count in place with what the server confirmed.
     setSpaces((prev) =>
       prev.map((s) => (s._id === data.space._id ? data.space : s))
     );
-    // formValues.reservationDate and .seats are both plain, free-typed
-    // strings - shown as-is, no Date object or Number formatting involved.
     setReservingSpace(null);
-    return null; // no error // no error
+    return null;
   };
 
   return (
@@ -235,7 +246,7 @@ function StudySpaces() {
         </form>
       </div>
 
-      {/* Page header - listing new spaces is developer-only (seeded/coded), not user-facing */}
+      {/* Page header */}
       <div className="sb-header">
         <div>
           <h1>Study Spaces</h1>
@@ -273,14 +284,26 @@ function StudySpaces() {
         <div className="sb-grid">
           {!loading && filteredSpaces.map((space) => (
             <div className="sb-card" key={space._id}>
-              {space.photoUrl ? (
-                <img className="sb-card-photo" src={space.photoUrl} alt={space.name} />
-              ) : (
-                <PhotoPlaceholder />
-              )}
+              <img
+                className="sb-card-photo"
+                src={PHOTO_BY_NAME[space.name]}
+                alt={space.name}
+              />
 
               <h3 className="sb-card-title">{space.name}</h3>
               <p className="sb-card-desc">{space.location}</p>
+
+              {/* Opens Google Maps in a new tab, searching for this
+                  exact space's name + location */}
+              <a
+                href={getMapsUrl(space)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="sb-map-link"
+                onClick={(e) => e.stopPropagation()}
+              >
+                📍 View on Google Maps
+              </a>
 
               <div className="sb-meta">
                 <span
