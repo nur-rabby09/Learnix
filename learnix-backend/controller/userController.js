@@ -6,6 +6,20 @@ const lifetime = 3600000;
 const isProd = process.env.NODE_ENV === "production";
 const emailRegex = /^[a-z0-9._%+-]+@(gmail|yahoo|outlook|hotmail|live)\.com$/;
 
+// Fields a user is allowed to edit from the Profile page
+const EDITABLE_FIELDS = [
+  "firstName",
+  "lastName",
+  "university",
+  "department",
+  "studentId",
+  "currentSemester",
+  "startDate",
+  "graduationDate",
+  "phone",
+  "bio",
+];
+
 export const createUser = async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
 
@@ -63,5 +77,59 @@ export const getProfile = async (req, res) => {
     return res.status(200).json(userInfo);
   } catch (err) {
     return res.status(400).json(err);
+  }
+};
+
+// PUT /api/users/profile
+export const updateProfile = async (req, res) => {
+  const updates = {};
+
+  for (const field of EDITABLE_FIELDS) {
+    if (req.body[field] !== undefined) {
+      updates[field] = String(req.body[field]).trim();
+    }
+  }
+
+  if ("firstName" in updates && !updates.firstName) {
+    return res.status(400).json({ error: "First name can't be empty" });
+  }
+
+  if ("lastName" in updates && !updates.lastName) {
+    return res.status(400).json({ error: "Last name can't be empty" });
+  }
+
+  if (updates.bio && updates.bio.length > 300) {
+    return res.status(400).json({ error: "Bio must be 300 characters or less" });
+  }
+
+  const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+  for (const field of ["startDate", "graduationDate"]) {
+    if (updates[field] && !dateRegex.test(updates[field])) {
+      return res.status(400).json({ error: `${field} must be in YYYY-MM-DD format` });
+    }
+  }
+
+  if (
+    updates.startDate &&
+    updates.graduationDate &&
+    updates.graduationDate < updates.startDate
+  ) {
+    return res.status(400).json({ error: "Graduation date can't be before the start date" });
+  }
+
+  try {
+    const user = await User.findByIdAndUpdate(
+      req.userId,
+      { $set: updates },
+      { new: true, runValidators: true },
+    ).select(["-password", "-__v"]);
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    return res.status(200).json(user);
+  } catch (err) {
+    return res.status(400).json({ error: "Could not update profile" });
   }
 };
