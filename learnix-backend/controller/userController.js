@@ -12,8 +12,6 @@ const EDITABLE_FIELDS = [
   "lastName",
   "university",
   "department",
-  "studentId",
-  "currentSemester",
   "startDate",
   "graduationDate",
   "phone",
@@ -96,6 +94,12 @@ export const updateProfile = async (req, res) => {
 
   if ("lastName" in updates && !updates.lastName) {
     return res.status(400).json({ error: "Last name can't be empty" });
+  }
+
+  for (const field of ["university", "department"]) {
+    if (!updates[field]) {
+      return res.status(400).json({ error: `${field} is required` });
+    }
   }
 
   if (updates.bio && updates.bio.length > 300) {

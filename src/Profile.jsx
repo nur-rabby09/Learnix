@@ -8,10 +8,8 @@ import Footer from './Footer.jsx';
 // Student info fields shown under the name/email section.
 // Every one of these starts blank for a new user.
 const INFO_FIELDS = [
-  { name: 'university', label: 'University', type: 'text', placeholder: 'e.g. AUST' },
-  { name: 'department', label: 'Department', type: 'text', placeholder: 'e.g. CSE' },
-  { name: 'studentId', label: 'Student ID', type: 'text', placeholder: 'e.g. 20230104001' },
-  { name: 'currentSemester', label: 'Current semester', type: 'text', placeholder: 'e.g. 3rd' },
+  { name: 'university', label: 'University', type: 'text', placeholder: 'e.g. AUST', required: true },
+  { name: 'department', label: 'Department', type: 'text', placeholder: 'e.g. CSE', required: true },
   { name: 'startDate', label: 'Starting date', type: 'date' },
   { name: 'graduationDate', label: 'Graduation date', type: 'date' },
   { name: 'phone', label: 'Phone', type: 'text', placeholder: '01XXXXXXXXX' },
@@ -23,8 +21,6 @@ function buildForm(user) {
     lastName: user.lastName || '',
     university: user.university || '',
     department: user.department || '',
-    studentId: user.studentId || '',
-    currentSemester: user.currentSemester || '',
     startDate: user.startDate || '',
     graduationDate: user.graduationDate || '',
     phone: user.phone || '',
@@ -86,6 +82,13 @@ function Profile() {
     if (!form.firstName.trim() || !form.lastName.trim()) {
       setError('First and last name are required');
       return;
+    }
+
+    for (const field of INFO_FIELDS) {
+      if (field.required && !form[field.name].trim()) {
+        setError(`${field.label} is required`);
+        return;
+      }
     }
 
     if (form.startDate && form.graduationDate && form.graduationDate < form.startDate) {
@@ -162,23 +165,18 @@ function Profile() {
             <div className="profile-grid">
               {INFO_FIELDS.map((field) => (
                 <div className="profile-field" key={field.name}>
-                  <label>{field.label}</label>
-                  {user[field.name] ? (
-                    <p>{user[field.name]}</p>
-                  ) : (
-                    <p className="profile-empty">Not added yet</p>
-                  )}
+                  <label>
+                    {field.label}
+                    {field.required && <span className="required-star"> *</span>}
+                  </label>
+                  <p>{user[field.name] || '\u00A0'}</p>
                 </div>
               ))}
             </div>
 
             <div className="profile-field">
               <label>Bio</label>
-              {user.bio ? (
-                <p className="profile-bio">{user.bio}</p>
-              ) : (
-                <p className="profile-empty">Not added yet</p>
-              )}
+              <p className="profile-bio">{user.bio || '\u00A0'}</p>
             </div>
 
             <div className="profile-actions">
@@ -225,7 +223,10 @@ function Profile() {
             <div className="profile-grid">
               {INFO_FIELDS.map((field) => (
                 <div className="profile-field" key={field.name}>
-                  <label>{field.label}</label>
+                  <label>
+                    {field.label}
+                    {field.required && <span className="required-star"> *</span>}
+                  </label>
                   <input
                     type={field.type}
                     name={field.name}

@@ -102,9 +102,8 @@
   resize: vertical;
 }
 
-.profile-empty {
-  color: #aaa !important;
-  font-style: italic;
+.required-star {
+  color: red;
 }
 
 .profile-bio {
