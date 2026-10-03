@@ -3,8 +3,6 @@ import cookieParser from "cookie-parser";
 import mongoose from "mongoose";
 import cors from "cors";
 import "dotenv/config";
-import dns from "dns";
-dns.setServers(["8.8.8.8", "8.8.4.4"]);
 
 import authRouter from "./routes/auth.js";
 import userRouter from "./routes/users.js";
