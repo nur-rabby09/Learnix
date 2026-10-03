@@ -384,3 +384,92 @@
     grid-template-columns: 1fr;
   }
 }
+
+
+/* Interested button and status badges */
+.sb-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.sb-interest-btn {
+  font-size: 13px;
+  padding: 6px 14px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.sb-status {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 5px 14px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.sb-status-pending {
+  background: #fff4d6;
+  color: #8a6100;
+}
+
+.sb-status-accepted {
+  background: #e6f4ea;
+  color: #1e7a34;
+}
+
+.sb-status-declined {
+  background: #fdecea;
+  color: #b3261e;
+}
+
+/* Interested students popup */
+.sb-int-post {
+  margin: -8px 0 16px;
+  font-size: 14px;
+  color: #666;
+}
+
+.sb-int-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-bottom: 1px solid #eee;
+  padding: 12px 0;
+}
+
+.sb-int-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.sb-int-info strong {
+  font-size: 15px;
+  color: #222;
+}
+
+.sb-int-info span {
+  font-size: 13px;
+  color: #666;
+}
+
+.sb-int-actions {
+  display: flex;
+  gap: 8px;
+}
+
+
+/* Delete confirmation */
+.sb-modal-text {
+  font-size: 15px;
+  line-height: 1.5;
+  color: #555;
+  margin: 0;
+}
+
+.sb-confirm-delete-btn {
+  background: #b3261e;
+}

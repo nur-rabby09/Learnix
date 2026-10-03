@@ -91,6 +91,12 @@ function StudyBuddy() {
   // Poster profile popup
   const [profileView, setProfileView] = useState(null);
 
+  // "Interested students" popup (post owner only)
+  const [interestView, setInterestView] = useState(null);
+
+  // Post waiting for the "are you sure?" delete confirmation
+  const [deleteTarget, setDeleteTarget] = useState(null);
+
   const isLoggedIn = Boolean(currentUser);
   const headerRef = useRef(null);
 
@@ -167,6 +173,63 @@ function StudyBuddy() {
 
     if (response.ok) {
       setPosts(posts.filter((post) => post._id !== postId));
+    }
+  };
+
+  const confirmDelete = async () => {
+    await handleDelete(deleteTarget._id);
+    setDeleteTarget(null);
+  };
+
+  // "Interested" button on someone else's post
+  const handleInterest = async (postId) => {
+    const response = await fetch(`${API_URL}/posts/${postId}/interest`, {
+      method: 'POST',
+      credentials: 'include',
+    });
+
+    if (response.ok) {
+      setPosts(
+        posts.map((post) =>
+          post._id === postId ? { ...post, myInterest: 'pending' } : post,
+        ),
+      );
+    }
+  };
+
+  // Post owner opens the list of interested students
+  const handleOpenInterests = async (post) => {
+    setInterestView({ postId: post._id, title: post.title, list: [] });
+
+    const response = await fetch(`${API_URL}/posts/${post._id}/interests`, {
+      credentials: 'include',
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      setInterestView((view) => ({ ...view, list: data }));
+    }
+  };
+
+  // Post owner accepts or declines one student
+  const handleRespond = async (interestId, status) => {
+    const response = await fetch(
+      `${API_URL}/posts/${interestView.postId}/interests/${interestId}`,
+      {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status }),
+      },
+    );
+
+    if (response.ok) {
+      setInterestView((view) => ({
+        ...view,
+        list: view.list.map((item) =>
+          item._id === interestId ? { ...item, status } : item,
+        ),
+      }));
     }
   };
 
@@ -258,7 +321,10 @@ function StudyBuddy() {
           <p className="sb-status-text">Loading posts...</p>
         ) : filteredPosts.length > 0 ? (
           <div className="sb-grid">
-            {filteredPosts.map((post) => (
+            {filteredPosts.map((post) => {
+              const isOwner = isLoggedIn && currentUser && post.createdBy === currentUser._id;
+
+              return (
               <div className="sb-card" key={post._id}>
                 {post.createdBy && post.posterName && (
                   <div className="sb-poster">
@@ -289,17 +355,46 @@ function StudyBuddy() {
                     <span className="sb-email">✉️ {post.email}</span>
                     {post.phone && <span className="sb-phone">📞 {post.phone}</span>}
                   </div>
-                  {isLoggedIn && currentUser && post.createdBy === currentUser._id && (
-                    <button
-                      className="btn-outline sb-delete-btn"
-                      onClick={() => handleDelete(post._id)}
-                    >
-                      Delete
-                    </button>
-                  )}
+                  <div className="sb-actions">
+                    {isOwner && (
+                      <>
+                        <button
+                          className="btn-solid sb-interest-btn"
+                          onClick={() => handleOpenInterests(post)}
+                        >
+                          Interested ({post.interestCount || 0})
+                        </button>
+                        <button
+                          className="btn-outline sb-delete-btn"
+                          onClick={() => setDeleteTarget(post)}
+                        >
+                          Delete
+                        </button>
+                      </>
+                    )}
+
+                    {isLoggedIn && !isOwner && post.createdBy && !post.myInterest && (
+                      <button
+                        className="btn-solid sb-interest-btn"
+                        onClick={() => handleInterest(post._id)}
+                      >
+                        I'm interested
+                      </button>
+                    )}
+                    {!isOwner && post.myInterest === 'pending' && (
+                      <span className="sb-status sb-status-pending">Interest sent</span>
+                    )}
+                    {!isOwner && post.myInterest === 'accepted' && (
+                      <span className="sb-status sb-status-accepted">Accepted</span>
+                    )}
+                    {!isOwner && post.myInterest === 'declined' && (
+                      <span className="sb-status sb-status-declined">Declined</span>
+                    )}
+                  </div>
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         ) : displayedPosts.length > 0 ? (
           <div className="sb-empty">
@@ -389,6 +484,87 @@ function StudyBuddy() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete confirmation */}
+      {deleteTarget && (
+        <div className="sb-modal-overlay" onClick={() => setDeleteTarget(null)}>
+          <div className="sb-modal" onClick={(e) => e.stopPropagation()}>
+            <h3>Delete this post?</h3>
+            <p className="sb-modal-text">
+              Are you sure you want to delete "{deleteTarget.title}"? The post and everyone's
+              interest in it will be removed. This can't be undone.
+            </p>
+            <div className="sb-form-actions">
+              <button className="btn-outline" onClick={() => setDeleteTarget(null)}>
+                Cancel
+              </button>
+              <button className="btn-solid sb-confirm-delete-btn" onClick={confirmDelete}>
+                Yes, delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Interested students modal (post owner) */}
+      {interestView && (
+        <div className="sb-modal-overlay" onClick={() => setInterestView(null)}>
+          <div className="sb-modal" onClick={(e) => e.stopPropagation()}>
+            <h3>Interested students</h3>
+            <p className="sb-int-post">{interestView.title}</p>
+
+            {interestView.list.length === 0 && (
+              <p className="sb-status-text">Nobody has clicked interested yet.</p>
+            )}
+
+            {interestView.list.map((item) => (
+              <div className="sb-int-item" key={item._id}>
+                <div className="sb-int-info">
+                  <strong>
+                    {item.user.firstName} {item.user.lastName}
+                  </strong>
+                  <span>
+                    {[item.user.department, item.user.university].filter(Boolean).join(', ')}
+                  </span>
+                </div>
+
+                {item.status === 'pending' ? (
+                  <div className="sb-int-actions">
+                    <button
+                      className="btn-solid sb-view-btn"
+                      onClick={() => handleRespond(item._id, 'accepted')}
+                    >
+                      Accept
+                    </button>
+                    <button
+                      className="btn-outline sb-view-btn"
+                      onClick={() => handleRespond(item._id, 'declined')}
+                    >
+                      Decline
+                    </button>
+                  </div>
+                ) : (
+                  <span
+                    className={
+                      item.status === 'accepted'
+                        ? 'sb-status sb-status-accepted'
+                        : 'sb-status sb-status-declined'
+                    }
+                  >
+                    {item.status === 'accepted' ? 'Accepted' : 'Declined'}
+                  </span>
+                )}
+              </div>
+            ))}
+
+            <div className="sb-form-actions">
+              <button className="btn-outline" onClick={() => setInterestView(null)}>
+                Close
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -1,5 +1,22 @@
 import { Schema, model } from "mongoose";
 
+// A student who clicked "Interested" on a post
+const interestSchema = new Schema(
+  {
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    status: {
+      type: Schema.Types.String,
+      enum: ["pending", "accepted", "declined"],
+      default: "pending",
+    },
+  },
+  { timestamps: true },
+);
+
 const postSchema = new Schema(
   {
     title: {
@@ -34,6 +51,10 @@ const postSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
+    },
+    interests: {
+      type: [interestSchema],
+      default: [],
     },
   },
   { timestamps: true },
