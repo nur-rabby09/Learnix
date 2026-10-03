@@ -12,6 +12,7 @@ import studySpaceRouter from "./routes/studySpaces.js";
 import postRouter from "./routes/posts.js";
 import accessoryRouter from "./routes/accessories.js";
 import log from "./middlewares/logger.js";
+import carbon from "./middlewares/carbon.js";
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -37,6 +38,7 @@ app.use(
   }),
 );
 app.use(log);
+app.use(carbon);
 
 app.get("/api", (req, res) => res.json({ message: "API is working" }));
 
