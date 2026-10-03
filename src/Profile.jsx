@@ -5,26 +5,41 @@ import { API_URL } from './Config.js';
 import Navbar from './Navbar.jsx';
 import Footer from './Footer.jsx';
 
-// Student info fields shown under the name/email section.
-// Every one of these starts blank for a new user.
-const INFO_FIELDS = [
-  { name: 'university', label: 'University', type: 'text', placeholder: 'e.g. AUST', required: true },
-  { name: 'department', label: 'Department', type: 'text', placeholder: 'e.g. CSE', required: true },
-  { name: 'startDate', label: 'Starting date', type: 'date' },
-  { name: 'graduationDate', label: 'Graduation date', type: 'date' },
-  { name: 'phone', label: 'Phone', type: 'text', placeholder: '01XXXXXXXXX' },
+const MONTHS = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
 ];
+
+// "2028-03" -> "March 2028"
+function formatMonth(value) {
+  if (!value) {
+    return '';
+  }
+  const [year, month] = value.slice(0, 7).split('-');
+  const name = MONTHS[Number(month) - 1];
+  return name ? `${name} ${year}` : '';
+}
+
+// Label changes with the date: past -> "Graduated", future -> "Expected graduation"
+function graduationLabel(value) {
+  if (!value) {
+    return 'Graduation date';
+  }
+  const now = new Date();
+  const current = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  return value.slice(0, 7) <= current ? 'Graduated' : 'Expected graduation';
+}
 
 function buildForm(user) {
   return {
     firstName: user.firstName || '',
     lastName: user.lastName || '',
+    bio: user.bio || '',
+    phone: user.phone || '',
     university: user.university || '',
     department: user.department || '',
-    startDate: user.startDate || '',
-    graduationDate: user.graduationDate || '',
-    phone: user.phone || '',
-    bio: user.bio || '',
+    startDate: (user.startDate || '').slice(0, 7),
+    graduationDate: (user.graduationDate || '').slice(0, 7),
   };
 }
 
@@ -84,11 +99,14 @@ function Profile() {
       return;
     }
 
-    for (const field of INFO_FIELDS) {
-      if (field.required && !form[field.name].trim()) {
-        setError(`${field.label} is required`);
-        return;
-      }
+    if (!form.university.trim()) {
+      setError('University is required');
+      return;
+    }
+
+    if (!form.department.trim()) {
+      setError('Department is required');
+      return;
     }
 
     if (form.startDate && form.graduationDate && form.graduationDate < form.startDate) {
@@ -156,27 +174,46 @@ function Profile() {
             </div>
 
             <div className="profile-field">
-              <label>Email</label>
-              <p>{user.email}</p>
+              <label>Bio</label>
+              <p className="profile-bio">{user.bio || '\u00A0'}</p>
             </div>
 
             <h3 className="profile-section">Student info</h3>
 
-            <div className="profile-grid">
-              {INFO_FIELDS.map((field) => (
-                <div className="profile-field" key={field.name}>
-                  <label>
-                    {field.label}
-                    {field.required && <span className="required-star"> *</span>}
-                  </label>
-                  <p>{user[field.name] || '\u00A0'}</p>
-                </div>
-              ))}
+            <div className="profile-row">
+              <div className="profile-field">
+                <label>Email</label>
+                <p>{user.email}</p>
+              </div>
+              <div className="profile-field">
+                <label>Phone</label>
+                <p>{user.phone || '\u00A0'}</p>
+              </div>
             </div>
 
             <div className="profile-field">
-              <label>Bio</label>
-              <p className="profile-bio">{user.bio || '\u00A0'}</p>
+              <label>
+                University<span className="required-star"> *</span>
+              </label>
+              <p>{user.university || '\u00A0'}</p>
+            </div>
+
+            <div className="profile-field">
+              <label>
+                Department<span className="required-star"> *</span>
+              </label>
+              <p>{user.department || '\u00A0'}</p>
+            </div>
+
+            <div className="profile-row">
+              <div className="profile-field">
+                <label>Starting date</label>
+                <p>{formatMonth(user.startDate) || '\u00A0'}</p>
+              </div>
+              <div className="profile-field">
+                <label>{graduationLabel(user.graduationDate)}</label>
+                <p>{formatMonth(user.graduationDate) || '\u00A0'}</p>
+              </div>
             </div>
 
             <div className="profile-actions">
@@ -214,31 +251,6 @@ function Profile() {
             </div>
 
             <div className="profile-field">
-              <label>Email</label>
-              <p className="profile-locked">{user.email}</p>
-            </div>
-
-            <h3 className="profile-section">Student info</h3>
-
-            <div className="profile-grid">
-              {INFO_FIELDS.map((field) => (
-                <div className="profile-field" key={field.name}>
-                  <label>
-                    {field.label}
-                    {field.required && <span className="required-star"> *</span>}
-                  </label>
-                  <input
-                    type={field.type}
-                    name={field.name}
-                    placeholder={field.placeholder}
-                    value={form[field.name]}
-                    onChange={handleChange}
-                  />
-                </div>
-              ))}
-            </div>
-
-            <div className="profile-field">
               <label>Bio</label>
               <textarea
                 name="bio"
@@ -249,6 +261,76 @@ function Profile() {
                 onChange={handleChange}
               />
               <span className="profile-counter">{form.bio.length}/300</span>
+            </div>
+
+            <h3 className="profile-section">Student info</h3>
+
+            <div className="profile-row">
+              <div className="profile-field">
+                <label>Email</label>
+                <p className="profile-locked">{user.email}</p>
+              </div>
+              <div className="profile-field">
+                <label>
+                  Phone<span className="optional-text"> (optional)</span>
+                </label>
+                <input
+                  type="text"
+                  name="phone"
+                  placeholder="01XXXXXXXXX"
+                  value={form.phone}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+
+            <div className="profile-field">
+              <label>
+                University<span className="required-star"> *</span>
+              </label>
+              <input
+                type="text"
+                name="university"
+                placeholder="e.g. AUST"
+                value={form.university}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="profile-field">
+              <label>
+                Department<span className="required-star"> *</span>
+              </label>
+              <input
+                type="text"
+                name="department"
+                placeholder="e.g. CSE"
+                value={form.department}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="profile-row">
+              <div className="profile-field">
+                <label>Starting date</label>
+                <input
+                  type="month"
+                  name="startDate"
+                  value={form.startDate}
+                  onChange={handleChange}
+                />
+              </div>
+              <div className="profile-field">
+                <label>
+                  Graduation date<span className="optional-text"> (actual or expected)</span>
+                </label>
+                <input
+                  type="month"
+                  name="graduationDate"
+                  value={form.graduationDate}
+                  onChange={handleChange}
+                />
+              </div>
             </div>
 
             <div className="profile-actions">

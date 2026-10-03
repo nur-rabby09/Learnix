@@ -106,10 +106,10 @@ export const updateProfile = async (req, res) => {
     return res.status(400).json({ error: "Bio must be 300 characters or less" });
   }
 
-  const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+  const dateRegex = /^\d{4}-(0[1-9]|1[0-2])$/;
   for (const field of ["startDate", "graduationDate"]) {
     if (updates[field] && !dateRegex.test(updates[field])) {
-      return res.status(400).json({ error: `${field} must be in YYYY-MM-DD format` });
+      return res.status(400).json({ error: `${field} must be in YYYY-MM format` });
     }
   }
 
