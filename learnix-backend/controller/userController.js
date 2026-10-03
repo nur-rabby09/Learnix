@@ -1,6 +1,7 @@
 import { hashPassword } from "../utils/helpers.js";
 import User from "../model/user.js";
 import jwt from "jsonwebtoken";
+import { isValidObjectId } from "mongoose";
 
 const lifetime = 3600000;
 const isProd = process.env.NODE_ENV === "production";
@@ -135,5 +136,36 @@ export const updateProfile = async (req, res) => {
     return res.status(200).json(user);
   } catch (err) {
     return res.status(400).json({ error: "Could not update profile" });
+  }
+};
+
+// GET /api/users/:userId - another student's public profile (login required)
+export const getPublicProfile = async (req, res) => {
+  const { userId } = req.params;
+
+  if (!isValidObjectId(userId)) {
+    return res.status(400).json({ error: "Invalid user id" });
+  }
+
+  try {
+    const user = await User.findById(userId).select([
+      "firstName",
+      "lastName",
+      "email",
+      "phone",
+      "university",
+      "department",
+      "startDate",
+      "graduationDate",
+      "bio",
+    ]);
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    return res.status(200).json(user);
+  } catch (err) {
+    return res.status(400).json({ error: "Could not load profile" });
   }
 };

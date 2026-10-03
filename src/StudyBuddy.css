@@ -275,3 +275,112 @@
   gap: 12px;
   margin-top: 24px;
 }
+
+/* Poster row on each card */
+.sb-poster {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #eee;
+}
+
+.sb-poster-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: green;
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.sb-poster-name {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sb-view-btn {
+  font-size: 13px;
+  padding: 6px 14px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* Poster profile modal */
+.sb-pf {
+  text-align: center;
+}
+
+.sb-pf-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: green;
+  color: white;
+  font-size: 26px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 14px;
+}
+
+.sb-modal .sb-pf-name {
+  margin: 0 0 10px;
+  font-size: 22px;
+}
+
+.sb-pf-bio {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #666;
+  margin: 0 0 20px;
+  white-space: pre-wrap;
+}
+
+.sb-pf-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 20px;
+  text-align: left;
+  border-top: 1px solid #eee;
+  padding-top: 20px;
+}
+
+.sb-pf-item {
+  min-width: 0;
+}
+
+.sb-pf-item span {
+  display: block;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #888;
+  margin-bottom: 4px;
+}
+
+.sb-pf-item p {
+  margin: 0;
+  font-size: 15px;
+  color: #222;
+  word-break: break-word;
+}
+
+@media (max-width: 500px) {
+  .sb-pf-list {
+    grid-template-columns: 1fr;
+  }
+}

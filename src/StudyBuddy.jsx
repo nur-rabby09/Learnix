@@ -1,10 +1,35 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './App.css';
 import './StudyBuddy.css';
 import Footer from './Footer.jsx';
 import Navbar from './Navbar.jsx';
 import heroImg from './assets/image001.jpg';
 import { API_URL } from './Config.js';
+
+const MONTHS = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
+];
+
+// "2028-03" -> "March 2028"
+function formatMonth(value) {
+  if (!value) {
+    return '';
+  }
+  const [year, month] = value.slice(0, 7).split('-');
+  const name = MONTHS[Number(month) - 1];
+  return name ? `${name} ${year}` : '';
+}
+
+// Label changes with the date: past -> "Graduated", future -> "Expected graduation"
+function graduationLabel(value) {
+  if (!value) {
+    return 'Graduation date';
+  }
+  const now = new Date();
+  const current = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  return value.slice(0, 7) <= current ? 'Graduated' : 'Expected graduation';
+}
 
 // Shown only to guests (not logged in) as a preview of the feature
 const DUMMY_POSTS = [
@@ -46,7 +71,6 @@ const EMPTY_FORM = {
   description: '',
   time: '',
   place: '',
-  phone: '',
 };
 
 function StudyBuddy() {
@@ -64,7 +88,19 @@ function StudyBuddy() {
   const [formError, setFormError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
+  // Poster profile popup
+  const [profileView, setProfileView] = useState(null);
+
   const isLoggedIn = Boolean(currentUser);
+  const headerRef = useRef(null);
+
+  const fetchPosts = () => {
+    setLoadingPosts(true);
+    fetch(`${API_URL}/posts`, { credentials: 'include' })
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data) => setPosts(data))
+      .finally(() => setLoadingPosts(false));
+  };
 
   // Check login state, then load the right set of posts
   useEffect(() => {
@@ -78,14 +114,6 @@ function StudyBuddy() {
         }
       });
   }, []);
-
-  const fetchPosts = () => {
-    setLoadingPosts(true);
-    fetch(`${API_URL}/posts`, { credentials: 'include' })
-      .then((res) => (res.ok ? res.json() : []))
-      .then((data) => setPosts(data))
-      .finally(() => setLoadingPosts(false));
-  };
 
   const handleCreatePost = () => {
     if (!isLoggedIn) {
@@ -142,12 +170,54 @@ function StudyBuddy() {
     }
   };
 
+  const handleViewProfile = async (userId) => {
+    setProfileView({ loading: true, error: '', user: null });
+
+    try {
+      const response = await fetch(`${API_URL}/users/${userId}`, {
+        credentials: 'include',
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        setProfileView({ loading: false, error: data.error || 'Could not load profile', user: null });
+        return;
+      }
+
+      setProfileView({ loading: false, error: '', user: data });
+    } catch {
+      setProfileView({ loading: false, error: 'Could not load profile', user: null });
+    }
+  };
+
+  // Results update while typing; pressing Search / Enter just jumps to the results
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    // TODO: filter posts by searchTerm
+    if (headerRef.current) {
+      headerRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   const displayedPosts = isLoggedIn ? posts : DUMMY_POSTS;
+
+  // Every word typed must appear somewhere in the post
+  const keywords = searchTerm.trim().toLowerCase().split(/\s+/).filter(Boolean);
+
+  const filteredPosts = keywords.length
+    ? displayedPosts.filter((post) => {
+        const text = [
+          post.title,
+          post.subject,
+          post.description,
+          post.time,
+          post.place,
+          post.posterName,
+        ]
+          .join(' ')
+          .toLowerCase();
+        return keywords.every((word) => text.includes(word));
+      })
+    : displayedPosts;
 
   return (
     <div>
@@ -169,7 +239,7 @@ function StudyBuddy() {
       </div>
 
       {/* Page header */}
-      <div className="sb-header">
+      <div className="sb-header" ref={headerRef}>
         <div>
           <h1>Study Buddy events</h1>
           <p>Connect with students studying what you're studying.</p>
@@ -186,10 +256,25 @@ function StudyBuddy() {
       <div className="sb-feed">
         {checkingAuth || loadingPosts ? (
           <p className="sb-status-text">Loading posts...</p>
-        ) : displayedPosts.length > 0 ? (
+        ) : filteredPosts.length > 0 ? (
           <div className="sb-grid">
-            {displayedPosts.map((post) => (
+            {filteredPosts.map((post) => (
               <div className="sb-card" key={post._id}>
+                {post.createdBy && post.posterName && (
+                  <div className="sb-poster">
+                    <div className="sb-poster-avatar">
+                      {post.posterName.charAt(0).toUpperCase()}
+                    </div>
+                    <span className="sb-poster-name">{post.posterName}</span>
+                    <button
+                      className="btn-outline sb-view-btn"
+                      onClick={() => handleViewProfile(post.createdBy)}
+                    >
+                      View profile
+                    </button>
+                  </div>
+                )}
+
                 <h3 className="sb-card-title">{post.title}</h3>
                 {post.subject && <p className="sb-card-subject">{post.subject}</p>}
                 <p className="sb-card-desc">{post.description}</p>
@@ -215,6 +300,13 @@ function StudyBuddy() {
                 </div>
               </div>
             ))}
+          </div>
+        ) : displayedPosts.length > 0 ? (
+          <div className="sb-empty">
+            <p>No posts match "{searchTerm.trim()}".</p>
+            <button className="btn-outline" onClick={() => setSearchTerm('')}>
+              Clear search
+            </button>
           </div>
         ) : (
           <div className="sb-empty">
@@ -281,16 +373,11 @@ function StudyBuddy() {
                 required
               />
 
-              <label>Phone number (optional)</label>
-              <input
-                type="text"
-                name="phone"
-                value={formData.phone}
-                onChange={handleFormChange}
-              />
-
               <p className="sb-form-note">
-                Your email ({currentUser?.email}) will be shared automatically.
+                Your email ({currentUser?.email})
+                {currentUser?.phone
+                  ? ` and phone number (${currentUser.phone}) will be shared automatically.`
+                  : ' will be shared automatically. Add a phone number in your profile to share it too.'}
               </p>
 
               <div className="sb-form-actions">
@@ -302,6 +389,66 @@ function StudyBuddy() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Poster profile modal */}
+      {profileView && (
+        <div className="sb-modal-overlay" onClick={() => setProfileView(null)}>
+          <div className="sb-modal" onClick={(e) => e.stopPropagation()}>
+            {profileView.loading && <p className="sb-status-text">Loading profile...</p>}
+
+            {profileView.error && <p className="sb-form-error">{profileView.error}</p>}
+
+            {profileView.user && (
+              <div className="sb-pf">
+                <div className="sb-pf-avatar">
+                  {profileView.user.firstName.charAt(0).toUpperCase()}
+                  {profileView.user.lastName.charAt(0).toUpperCase()}
+                </div>
+                <h3 className="sb-pf-name">
+                  {profileView.user.firstName} {profileView.user.lastName}
+                </h3>
+
+                {profileView.user.bio && (
+                  <p className="sb-pf-bio">{profileView.user.bio}</p>
+                )}
+
+                <div className="sb-pf-list">
+                  <div className="sb-pf-item">
+                    <span>University</span>
+                    <p>{profileView.user.university || '-'}</p>
+                  </div>
+                  <div className="sb-pf-item">
+                    <span>Department</span>
+                    <p>{profileView.user.department || '-'}</p>
+                  </div>
+                  <div className="sb-pf-item">
+                    <span>Starting date</span>
+                    <p>{formatMonth(profileView.user.startDate) || '-'}</p>
+                  </div>
+                  <div className="sb-pf-item">
+                    <span>{graduationLabel(profileView.user.graduationDate)}</span>
+                    <p>{formatMonth(profileView.user.graduationDate) || '-'}</p>
+                  </div>
+                  <div className="sb-pf-item">
+                    <span>Email</span>
+                    <p>{profileView.user.email}</p>
+                  </div>
+                  <div className="sb-pf-item">
+                    <span>Phone</span>
+                    <p>{profileView.user.phone || '-'}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div className="sb-form-actions">
+              <button className="btn-outline" onClick={() => setProfileView(null)}>
+                Close
+              </button>
+            </div>
           </div>
         </div>
       )}
