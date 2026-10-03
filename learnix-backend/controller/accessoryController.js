@@ -2,17 +2,33 @@ import Accessory from "../model/Accessory.js";
 import User from "../model/user.js";
 
 export const createAccessory = async (req, res) => {
-  const { name, item, model, date, time, location, phone } = req.body;
+  const { item, model, date, time, location } = req.body;
 
   try {
+    const user = await User.findById(req.userId).select([
+      "firstName",
+      "lastName",
+      "phone",
+    ]);
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    if (!user.phone) {
+      return res
+        .status(400)
+        .json({ error: "Please add your phone number to your profile first" });
+    }
+
     const newAccessory = new Accessory({
-      name,
+      name: `${user.firstName} ${user.lastName}`,
       item,
       model,
       date,
       time,
       location,
-      phone,
+      phone: user.phone,
       createdBy: req.userId,
     });
 
@@ -59,20 +75,23 @@ export const deleteAccessory = async (req, res) => {
 
 export const requestAccessory = async (req, res) => {
   const { accessoryId } = req.params;
-  const phone = String(req.body.phone || "").trim();
-  const location = String(req.body.location || "").trim();
-
-  if (!phone || !location) {
-    return res
-      .status(400)
-      .json({ error: "Mobile number and location are required" });
-  }
 
   try {
-    const user = await User.findById(req.userId).select(["firstName", "lastName"]);
+    const user = await User.findById(req.userId).select([
+      "firstName",
+      "lastName",
+      "email",
+      "phone",
+    ]);
 
     if (!user) {
       return res.status(404).json({ error: "User not found" });
+    }
+
+    if (!user.phone) {
+      return res
+        .status(400)
+        .json({ error: "Please add your phone number to your profile first" });
     }
 
     const name = `${user.firstName} ${user.lastName}`;
@@ -100,8 +119,8 @@ export const requestAccessory = async (req, res) => {
     accessory.requests.push({
       requestedBy: req.userId,
       name,
-      phone,
-      location,
+      email: user.email,
+      phone: user.phone,
     });
 
     await accessory.save();

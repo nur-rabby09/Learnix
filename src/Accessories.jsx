@@ -8,17 +8,10 @@ import Navbar from "./Navbar.jsx";
 import { API_URL } from "./Config.js";
 
 const EMPTY_FORM = {
-  name: "",
   item: "",
   model: "",
   date: "",
   time: "",
-  location: "",
-  phone: "",
-};
-
-const EMPTY_REQUEST_FORM = {
-  phone: "",
   location: "",
 };
 
@@ -39,10 +32,7 @@ function Accessories() {
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleting, setDeleting] = useState(false);
 
-  const [requestTarget, setRequestTarget] = useState(null);
-  const [requestForm, setRequestForm] = useState(EMPTY_REQUEST_FORM);
-  const [requestError, setRequestError] = useState("");
-  const [requestSubmitting, setRequestSubmitting] = useState(false);
+  const [requestingId, setRequestingId] = useState(null);
 
   const [listItem, setListItem] = useState(null);
   const [requestList, setRequestList] = useState([]);
@@ -89,6 +79,11 @@ function Accessories() {
       setGuestMessage("Please log in to add an item.");
       return;
     }
+    if (!currentUser.phone) {
+      setGuestMessage("Please add your phone number in your profile before adding an item.");
+      return;
+    }
+    setGuestMessage("");
     setFormError("");
     setFormData(EMPTY_FORM);
     setShowForm(true);
@@ -155,49 +150,33 @@ function Accessories() {
     }
   };
 
-  const openRequestForm = (item) => {
-    setRequestError("");
-    setRequestForm(EMPTY_REQUEST_FORM);
-    setRequestTarget(item);
-  };
+  const sendRequest = async (item) => {
+    if (!currentUser.phone) {
+      setGuestMessage("Please add your phone number in your profile before requesting.");
+      return;
+    }
 
-  const closeRequestForm = () => {
-    setRequestTarget(null);
-  };
-
-  const handleRequestFormChange = (e) => {
-    setRequestForm({ ...requestForm, [e.target.name]: e.target.value });
-  };
-
-  const handleRequestSubmit = async (e) => {
-    e.preventDefault();
-    setRequestError("");
-    setRequestSubmitting(true);
-    const itemId = requestTarget._id;
+    setGuestMessage("");
+    setRequestingId(item._id);
 
     try {
-      const response = await fetch(`${API_URL}/accessories/${itemId}/requests`, {
+      const response = await fetch(`${API_URL}/accessories/${item._id}/requests`, {
         method: "POST",
         credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(requestForm),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        setRequestError(data.error || "Something went wrong");
-        setRequestSubmitting(false);
-        return;
+        setGuestMessage(data.error || "Something went wrong");
+      } else {
+        setMyRequests({ ...myRequests, [item._id]: "pending" });
       }
-
-      setMyRequests({ ...myRequests, [itemId]: "pending" });
-      setRequestTarget(null);
-      setRequestSubmitting(false);
     } catch {
-      setRequestError("Something went wrong");
-      setRequestSubmitting(false);
+      setGuestMessage("Something went wrong");
     }
+
+    setRequestingId(null);
   };
 
   const openRequestList = async (item) => {
@@ -326,9 +305,10 @@ function Accessories() {
       <div className="acc-actions">
         <button
           className="btn-solid sb-interested-btn"
-          onClick={() => openRequestForm(item)}
+          onClick={() => sendRequest(item)}
+          disabled={requestingId === item._id}
         >
-          Request
+          {requestingId === item._id ? "Sending..." : "Request"}
         </button>
       </div>
     );
@@ -410,15 +390,6 @@ function Accessories() {
             {formError && <p className="sb-form-error">{formError}</p>}
 
             <form onSubmit={handleFormSubmit}>
-              <label>Your name</label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleFormChange}
-                required
-              />
-
               <label>Item</label>
               <input
                 type="text"
@@ -468,15 +439,6 @@ function Accessories() {
                 required
               />
 
-              <label>Phone number</label>
-              <input
-                type="text"
-                name="phone"
-                value={formData.phone}
-                onChange={handleFormChange}
-                required
-              />
-
               <div className="sb-form-actions">
                 <button type="button" className="btn-outline" onClick={() => setShowForm(false)}>
                   Cancel
@@ -515,49 +477,6 @@ function Accessories() {
         </div>
       )}
 
-      {requestTarget && (
-        <div className="sb-modal-overlay" onClick={closeRequestForm}>
-          <div className="sb-modal" onClick={(e) => e.stopPropagation()}>
-            <h3>Request {requestTarget.item}</h3>
-
-            {requestError && <p className="sb-form-error">{requestError}</p>}
-
-            <form onSubmit={handleRequestSubmit}>
-              <label>Mobile number</label>
-              <input
-                type="text"
-                name="phone"
-                value={requestForm.phone}
-                onChange={handleRequestFormChange}
-                required
-              />
-
-              <label>Location</label>
-              <input
-                type="text"
-                name="location"
-                value={requestForm.location}
-                onChange={handleRequestFormChange}
-                required
-              />
-
-              <p className="sb-form-note">
-                The owner will see these details in their request list.
-              </p>
-
-              <div className="sb-form-actions">
-                <button type="button" className="btn-outline" onClick={closeRequestForm}>
-                  Cancel
-                </button>
-                <button type="submit" className="btn-solid" disabled={requestSubmitting}>
-                  {requestSubmitting ? "Sending..." : "Send request"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
       {listItem && (
         <div className="sb-modal-overlay" onClick={closeRequestList}>
           <div className="sb-modal" onClick={(e) => e.stopPropagation()}>
@@ -573,8 +492,8 @@ function Accessories() {
                   <div className="acc-request-row" key={request._id}>
                     <div className="acc-request-info">
                       <span className="acc-request-name">{request.name}</span>
+                      <span>✉️ {request.email}</span>
                       <span>📞 {request.phone}</span>
-                      <span>📍 {request.location}</span>
                     </div>
 
                     {request.status === "pending" ? (

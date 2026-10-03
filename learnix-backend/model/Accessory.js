@@ -11,11 +11,11 @@ const requestSchema = new Schema(
       type: Schema.Types.String,
       required: true,
     },
-    phone: {
+    email: {
       type: Schema.Types.String,
-      required: true,
+      default: "",
     },
-    location: {
+    phone: {
       type: Schema.Types.String,
       required: true,
     },
