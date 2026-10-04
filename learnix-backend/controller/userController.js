@@ -107,19 +107,10 @@ export const updateProfile = async (req, res) => {
     return res.status(400).json({ error: "Bio must be 300 characters or less" });
   }
 
-  const dateRegex = /^\d{4}-(0[1-9]|1[0-2])$/;
   for (const field of ["startDate", "graduationDate"]) {
-    if (updates[field] && !dateRegex.test(updates[field])) {
-      return res.status(400).json({ error: `${field} must be in YYYY-MM format` });
+    if (updates[field] && updates[field].length > 30) {
+      return res.status(400).json({ error: `${field} is too long` });
     }
-  }
-
-  if (
-    updates.startDate &&
-    updates.graduationDate &&
-    updates.graduationDate < updates.startDate
-  ) {
-    return res.status(400).json({ error: "Graduation date can't be before the start date" });
   }
 
   try {

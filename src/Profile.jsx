@@ -5,31 +5,6 @@ import { API_URL } from './Config.js';
 import Navbar from './Navbar.jsx';
 import Footer from './Footer.jsx';
 
-const MONTHS = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
-];
-
-// "2028-03" -> "March 2028"
-function formatMonth(value) {
-  if (!value) {
-    return '';
-  }
-  const [year, month] = value.slice(0, 7).split('-');
-  const name = MONTHS[Number(month) - 1];
-  return name ? `${name} ${year}` : '';
-}
-
-// Label changes with the date: past -> "Graduated", future -> "Expected graduation"
-function graduationLabel(value) {
-  if (!value) {
-    return 'Graduation date';
-  }
-  const now = new Date();
-  const current = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-  return value.slice(0, 7) <= current ? 'Graduated' : 'Expected graduation';
-}
-
 function buildForm(user) {
   return {
     firstName: user.firstName || '',
@@ -38,8 +13,8 @@ function buildForm(user) {
     phone: user.phone || '',
     university: user.university || '',
     department: user.department || '',
-    startDate: (user.startDate || '').slice(0, 7),
-    graduationDate: (user.graduationDate || '').slice(0, 7),
+    startDate: user.startDate || '',
+    graduationDate: user.graduationDate || '',
   };
 }
 
@@ -106,11 +81,6 @@ function Profile() {
 
     if (!form.department.trim()) {
       setError('Department is required');
-      return;
-    }
-
-    if (form.startDate && form.graduationDate && form.graduationDate < form.startDate) {
-      setError('Graduation date can\'t be before the starting date');
       return;
     }
 
@@ -208,11 +178,11 @@ function Profile() {
             <div className="profile-row">
               <div className="profile-field">
                 <label>Starting date</label>
-                <p>{formatMonth(user.startDate) || '\u00A0'}</p>
+                <p>{user.startDate || '\u00A0'}</p>
               </div>
               <div className="profile-field">
-                <label>{graduationLabel(user.graduationDate)}</label>
-                <p>{formatMonth(user.graduationDate) || '\u00A0'}</p>
+                <label>Graduation date</label>
+                <p>{user.graduationDate || '\u00A0'}</p>
               </div>
             </div>
 
@@ -314,19 +284,21 @@ function Profile() {
               <div className="profile-field">
                 <label>Starting date</label>
                 <input
-                  type="month"
+                  type="text"
                   name="startDate"
+                  placeholder="e.g. January 2023"
                   value={form.startDate}
                   onChange={handleChange}
                 />
               </div>
               <div className="profile-field">
                 <label>
-                  Graduation date<span className="optional-text"> (actual or expected)</span>
+                  Graduation date<span className="optional-text"> (or expected)</span>
                 </label>
                 <input
-                  type="month"
+                  type="text"
                   name="graduationDate"
+                  placeholder="e.g. December 2026"
                   value={form.graduationDate}
                   onChange={handleChange}
                 />

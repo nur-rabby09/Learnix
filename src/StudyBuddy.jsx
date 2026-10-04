@@ -6,31 +6,6 @@ import Navbar from './Navbar.jsx';
 import heroImg from './assets/image001.jpg';
 import { API_URL } from './Config.js';
 
-const MONTHS = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
-];
-
-// "2028-03" -> "March 2028"
-function formatMonth(value) {
-  if (!value) {
-    return '';
-  }
-  const [year, month] = value.slice(0, 7).split('-');
-  const name = MONTHS[Number(month) - 1];
-  return name ? `${name} ${year}` : '';
-}
-
-// Label changes with the date: past -> "Graduated", future -> "Expected graduation"
-function graduationLabel(value) {
-  if (!value) {
-    return 'Graduation date';
-  }
-  const now = new Date();
-  const current = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-  return value.slice(0, 7) <= current ? 'Graduated' : 'Expected graduation';
-}
-
 // Shown only to guests (not logged in) as a preview of the feature
 const DUMMY_POSTS = [
   {
@@ -602,11 +577,11 @@ function StudyBuddy() {
                   </div>
                   <div className="sb-pf-item">
                     <span>Starting date</span>
-                    <p>{formatMonth(profileView.user.startDate) || '-'}</p>
+                    <p>{profileView.user.startDate || '-'}</p>
                   </div>
                   <div className="sb-pf-item">
-                    <span>{graduationLabel(profileView.user.graduationDate)}</span>
-                    <p>{formatMonth(profileView.user.graduationDate) || '-'}</p>
+                    <span>Graduation date</span>
+                    <p>{profileView.user.graduationDate || '-'}</p>
                   </div>
                   <div className="sb-pf-item">
                     <span>Email</span>

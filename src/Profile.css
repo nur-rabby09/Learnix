@@ -65,6 +65,9 @@
 
 .profile-field label {
   display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   font-size: 13px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
